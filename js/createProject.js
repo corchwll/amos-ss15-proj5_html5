@@ -11,10 +11,6 @@ var sqlCreateTableSessions = "CREATE TABLE IF NOT EXISTS Sessions (id INTEGER PR
 
 var sqlInsertProjects = "INSERT INTO Projects (id, name) VALUES (?, ?)";
 
-var dataset;
-
-var dataType;
-
 /* 
 function initDatabase 
 Ensures that database is initialized and contains the required tables.
