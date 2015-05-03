@@ -72,6 +72,6 @@ function printProjects(tx, results) {
 				'<input class="btn btn-default" id="' + results.rows.item(i).id + 'time" value="' + results.rows.item(i).aggregated_time + '" />' +			*/		
 			'</div>' +
 		'</div>'
-		console.log("dat time: " + results.rows.item(i).aggregated_time);
+		console.log("The time: " + results.rows.item(i).aggregated_time);
 	}
 }
