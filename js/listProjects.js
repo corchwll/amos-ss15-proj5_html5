@@ -9,6 +9,8 @@ var sqlCreateTableProjects = "CREATE TABLE IF NOT EXISTS Projects (id INTEGER PR
 
 var sqlCreateTableSessions = "CREATE TABLE IF NOT EXISTS Sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, project_id INTEGER, timestamp_start INTEGER, timestamp_stop INTEGER)";
 
+var sqlCreateTableUser = "CREATE TABLE IF NOT EXISTS User (employee_id INTEGER PRIMARY KEY, lastname TEXT, firstname TEXT, weekly_working_time INTEGER, total_vacation_time INTEGER, current_vacation_time INTEGER, current_overtime INTEGER, registration_date INTEGER)";
+
 var sqlCreateViewTimes = "CREATE VIEW IF NOT EXISTS Aggregated_Times AS SELECT project_id, SUM(timestamp_stop - timestamp_start) AS aggregated_time FROM Sessions GROUP BY project_id"; 
 /* WHERE timestamp_stop != 0 AND timestamp_start != 0 AND timestamp_stop IS NOT NULL AND timestamp_start IS NOT NULL GROUP BY project_id"; */
 
@@ -33,6 +35,7 @@ function createTablesAndViews()
 {
 	database.transaction(function (tx) {tx.executeSql(sqlCreateTableProjects, [])});
 	database.transaction(function (tx) {tx.executeSql(sqlCreateTableSessions, [])});
+	database.transaction(function (tx) {tx.executeSql(sqlCreateTableUser, [])});
 	database.transaction(function (tx) {tx.executeSql(sqlCreateViewTimes, [])});
 }
 

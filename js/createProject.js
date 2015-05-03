@@ -9,6 +9,8 @@ var sqlCreateTableProjects = "CREATE TABLE IF NOT EXISTS Projects (id INTEGER PR
 
 var sqlCreateTableSessions = "CREATE TABLE IF NOT EXISTS Sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, project_id INTEGER, timestamp_start INTEGER, timestamp_stop INTEGER)";
 
+var sqlCreateTableUser = "CREATE TABLE IF NOT EXISTS User (employee_id INTEGER PRIMARY KEY, lastname TEXT, firstname TEXT, weekly_working_time INTEGER, total_vacation_time INTEGER, current_vacation_time INTEGER, current_overtime INTEGER, registration_date INTEGER)";
+
 var sqlInsertProjects = "INSERT INTO Projects (id, name) VALUES (?, ?)";
 
 /* 
@@ -29,6 +31,7 @@ function createTables()
 {
 	database.transaction(function (tx) {tx.executeSql(sqlCreateTableProjects, [])});
 	database.transaction(function (tx) {tx.executeSql(sqlCreateTableSessions, [])});
+	database.transaction(function (tx) {tx.executeSql(sqlCreateTableUser, [])});
 }
 
 /* 
@@ -52,15 +55,15 @@ function insertProject()
 	console.log('insert button pressed');
 	var tmpProjectIdRaw = document.getElementById("project.id");
 	var tmpProjectNameRaw = document.getElementById("project.name");
-	console.log("Insert into Database" + tmpProjectIdRaw + tmpProjectNameRaw);
+	
 	var tmpProjectId = tmpProjectIdRaw.value;
 	var tmpProjectName =tmpProjectNameRaw.value;
 	console.log("Insert into Database");
 	database.transaction(function (tx) { tx.executeSql(sqlInsertProjects, [tmpProjectId, tmpProjectName], function(tx, res) {
-           console.log("insertId: " + res.insertId + " -- probably 1");
-           console.log("rowsAffected: " + res.rowsAffected + " -- should be 1");
+           //console.log("insertId: " + res.insertId + " -- probably 1");
+           //console.log("rowsAffected: " + res.rowsAffected + " -- should be 1");
+		   console.log("Insert complete");
        }); });
-	console.log("Insert complete");
 }
 
 
