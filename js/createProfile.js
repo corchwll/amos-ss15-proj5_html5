@@ -35,7 +35,7 @@ function createTables()
 }
 
 /* 
-function insertProfile
+function createProfile
 Reads the data which the user has entered into the app and inserts it into the database table User
 */
 function createProfile()
@@ -62,8 +62,7 @@ function createProfile()
 	console.log("Insert into Database");
 	
 	database.transaction(function (tx) { tx.executeSql(sqlInsertUser, [tmpProfileId, tmpProfileForename, tmpProfileSurname, tmpProfileWeaklyWorkingTime, tmpProfileTotalVacationTime, tmpProfileCurrentOvertime, tmpProfileCurrentVacationTime, currentTimestamp], function(tx, res) {
-           //console.log("insertId: " + res.insertId + " -- probably 1");
-           //console.log("rowsAffected: " + res.rowsAffected + " -- should be 1");
 		   console.log("Insert complete");
+		   window.location.replace("index.html");
        }); });
 }
