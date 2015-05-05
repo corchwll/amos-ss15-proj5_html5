@@ -12,11 +12,18 @@
         <title>MobileTimeRecording</title>
     </head>
     <body onload="getProjectsFromDatabase()">
+        <!-- project list container -->
         <div class="container">
             <div class="row">
+                <!-- notifications -->
+                <div class="col-xs-12">
+                    <div id="notification" class="hidden" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <div id="notificationInner"></div>
+                    </div>
+                </div>
                 <div class="col-xs-12">
                     <div class="panel-group text-center" id="ProjectList" role="tablist" aria-multiselectable="true">
-
                     </div>
                 </div>
             </div>

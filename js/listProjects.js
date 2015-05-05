@@ -22,6 +22,7 @@ Ensures that database is initialized and contains the required tables and views.
 */
 function getProjectsFromDatabase() 
 {
+	printNotification();
 	createTablesAndViews();
 	console.log("Database initilized");													//For debugging purposes
 	listProjects();
@@ -96,4 +97,33 @@ function addSessionForProject(projectId, projectName) {
 	window.sessionStorage.setItem("projectId", projectId);
 	window.sessionStorage.setItem("projectName", projectName);
 	window.location.replace("addSession.html");
+}
+
+/*
+function printNotification
+Prints a notification on top of the screen, if parameters are given in the url.
+ */
+function printNotification()
+{
+	/* get url parameter based on 'http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript' */
+	var match,
+	  urlParams = {},
+      pl     = /\+/g,  // Regex for replacing addition symbol with a space
+      search = /([^&=]+)=?([^&]*)/g,
+      decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+      query  = window.location.search.substring(1);
+
+  while (match = search.exec(query))
+  {
+  	urlParams[decode(match[1])] = decode(match[2]);
+  }
+
+  /* check if any parameter is in object */
+  if(!Object.keys(urlParams).length)
+  {
+  	return;
+  }
+
+  document.getElementById("notification").className = "alert alert-" + urlParams.style;
+  document.getElementById("notificationInner").innerHTML = '<strong>' + urlParams.message + '</strong>';
 }

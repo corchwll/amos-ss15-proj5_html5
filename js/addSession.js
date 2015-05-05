@@ -71,9 +71,6 @@ function addSession()
 	var startTimestamp = Date.parse(date + " " + startTime)/1000;
 	var stopTimestamp = Date.parse(date + " " + stopTime)/1000;
 	
-	//console.log("startTimestamp: " + startTimestamp);									//For debugging purposes
-	//console.log("stopTimestamp: " + stopTimestamp);										//For debugging purposes
-	
 	if (startTimestamp <= stopTimestamp) 
 	{
 		console.log("Insert into Database");
@@ -81,9 +78,9 @@ function addSession()
 			   console.log("Insert complete");
 			   window.sessionStorage.removeItem("projectName");
 			   window.sessionStorage.removeItem("projectId");
-			   window.location.replace("index.html");
+			   window.location.replace("index.html?style=success&message=Session%20added%20for%20" + projectName);
 		   }); });
 	} else {
-		window.location.replace("index.html");
+		window.location.replace("index.html?style=danger&message=An%20Error%20occured%20while%20adding%20a%20session%20for%20" + projectName);
 	}
 }
