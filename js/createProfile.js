@@ -44,7 +44,7 @@ function createProfile()
 	
 	var tmpProfileIdRaw = document.getElementById("profile.id");
 	var tmpProfileForenameRaw = document.getElementById("profile.forename");
-	var tmpProfileSurnameRaw = document.getElementById("profile.surename");
+	var tmpProfileSurnameRaw = document.getElementById("profile.surname");
 	var tmpProfileWeaklyWorkingTimeRaw = document.getElementById("profile.weekly_working_time");
 	var tmpProfileTotalVacationTimeRaw = document.getElementById("profile.total_vacation_time");
 	var tmpProfileCurrentOvertimeRaw = document.getElementById("profile.current_overtime");
