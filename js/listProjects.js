@@ -33,48 +33,67 @@ Creates the required tables ad views for the database.
  */
 function createTablesAndViews()
 {
-	database.transaction(function (tx) {tx.executeSql(sqlCreateTableProjects, [])});
-	database.transaction(function (tx) {tx.executeSql(sqlCreateTableSessions, [])});
-	database.transaction(function (tx) {tx.executeSql(sqlCreateTableUser, [])});
-	database.transaction(function (tx) {tx.executeSql(sqlCreateViewTimes, [])});
+	database.transaction(function (tx)
+	{
+		tx.executeSql(sqlCreateTableProjects, []);
+		tx.executeSql(sqlCreateTableSessions, []);
+		tx.executeSql(sqlCreateTableUser, []);
+		tx.executeSql(sqlCreateViewTimes, []);
+	});
 }
 
 /* 
 function listProjects
-Initiates the listing of all projects by receiving the data on projects from the database.
-Deligates the actual listing to the result function printProjects
- */
+Lists all projects currently saved in the database table Projects and generates the required html-code for each project to allow their representation on the start page (index.html)
+*/
 function listProjects()
 {
-	console.log("list Projects");														//For debugging purposes
-	database.transaction(function (tx) {tx.executeSql(sqlSelectAllProjectsWithTimes, [], printProjects)});
-}
-
-/* 
-function printProjects
-Prints the projects from the database table Projects
- */
-function printProjects(tx, results) {
-	console.log("print Projects");													//For debugging purposes
-	var len = results.rows.length;
-	for (var i = 0; i < len; i++)
+	var renderProject = function(row)
 	{
-		document.getElementById("ProjectList").innerHTML +=
-		'<div class="panel panel-default">' +
-			'<div class="panel-heading" role="tab" id="' + results.rows.item(i).id + '" data-toggle="collapse" data-parent="#ProjectList" href="#' + results.rows.item(i).id + 'body" aria-expanded="true" aria-controls="collapseOne" onclick="startStop(' + results.rows.item(i).id + ')">' +
+		console.log("the time: " + row.aggregated_time);
+
+		return '<div class="panel panel-default">' +
+			'<div class="panel-heading" role="tab" id="' + row.id + '" data-toggle="collapse" data-parent="#ProjectList" href="#' + row.id + 'body" aria-expanded="true" aria-controls="collapseOne" onclick="">' +
 				'<h4 class="panel-title">' +
-					results.rows.item(i).name +
+					row.name +
 				'</h4>' +
 			'</div>' +
-			'<div id="' + results.rows.item(i).id + 'body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">' +
-				'<div class="form-group">' +
-					'<input class="btn btn-default" id="' + results.rows.item(i).id + 'counter" value="0:0:0" />' +
-					'<button class="btn btn-danger" onclick="stop(' + results.rows.item(i).id + ')"><span class="glyphicon glyphicon-stop"></span></button>' +
-				'</div>' +
-				/* //for test purposes
-				'<input class="btn btn-default" id="' + results.rows.item(i).id + 'time" value="' + results.rows.item(i).aggregated_time + '" />' +			*/		
+			'<div id="' + row.id + 'body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">' +
+				'<p>' +
+					'<input class="btn btn-default" id="' + row.id + 'counter" value="0:0:0" />' +
+					'<button class="btn btn-success" onclick="start(' + row.id + ')"><span class="glyphicon glyphicon-play"></span></button>' +
+					'<button class="btn btn-danger" onclick="stop(' + row.id + ')"><span class="glyphicon glyphicon-stop"></span></button>' +
+					'<button class="btn btn-info" onclick="addSessionForProject(&quot;' + row.id + '&quot;, &quot;' + row.name + '&quot;)"><span class="glyphicon glyphicon-plus"></span></button>' +
+				'</p>' +	
 			'</div>' +
-		'</div>'
-		console.log("The time: " + results.rows.item(i).aggregated_time);
-	}
+		'</div>';
+	};
+
+	var render = function(tx, rs)
+	{
+		var rowOutput = '';
+		var projectList = document.getElementById("ProjectList");
+		var len = rs.rows.length;
+		for(var i = 0; i < len; i++)
+		{
+			 rowOutput += renderProject(rs.rows.item(i));
+		}
+
+		projectList.innerHTML = rowOutput;
+	};
+
+	database.transaction(function(tx) 
+	{
+		tx.executeSql(sqlSelectAllProjectsWithTimes, [], render, onError);
+	});
+}
+
+/*
+function addSessionForProject
+This function locally stores the information on which project the user chooses in order to add a session for the project. Furthermore, the function forwards after the storage process to the required page.
+*/
+function addSessionForProject(projectId, projectName) {
+	window.sessionStorage.setItem("projectId", projectId);
+	window.sessionStorage.setItem("projectName", projectName);
+	window.location.replace("addSession.html");
 }
