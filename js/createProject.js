@@ -61,6 +61,6 @@ function insertProject()
 	console.log("Insert into Database");
 	database.transaction(function (tx) { tx.executeSql(sqlInsertProjects, [tmpProjectId, tmpProjectName], function(tx, res) {
 		   console.log("Insert complete");
-		   window.location.replace("index.html");
+		   window.location.replace("index.html?style=success&message=Project%20" + tmpProjectName + "%20added");
        }); });
 }
