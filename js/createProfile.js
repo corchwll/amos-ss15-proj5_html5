@@ -63,6 +63,6 @@ function createProfile()
 	
 	database.transaction(function (tx) { tx.executeSql(sqlInsertUser, [tmpProfileId, tmpProfileForename, tmpProfileSurname, tmpProfileWeaklyWorkingTime, tmpProfileTotalVacationTime, tmpProfileCurrentOvertime, tmpProfileCurrentVacationTime, currentTimestamp], function(tx, res) {
 		   console.log("Insert complete");
-		   window.location.replace("index.html");
+		   window.location.replace("index.html?style=success&message=Profile%20created");
        }); });
 }
