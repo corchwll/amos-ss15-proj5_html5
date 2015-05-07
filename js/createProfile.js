@@ -29,9 +29,12 @@ Creates the required tables for the database.
  */
 function createTables()
 {
-	database.transaction(function (tx) {tx.executeSql(sqlCreateTableProjects, [])});
-	database.transaction(function (tx) {tx.executeSql(sqlCreateTableSessions, [])});
-	database.transaction(function (tx) {tx.executeSql(sqlCreateTableUser, [])});
+	database.transaction(function (tx)
+	{
+		tx.executeSql(sqlCreateTableProjects, []);
+		tx.executeSql(sqlCreateTableSessions, []);
+		tx.executeSql(sqlCreateTableUser, []);
+	});
 }
 
 /* 
