@@ -13,6 +13,12 @@ var sqlCreateTableUser = "CREATE TABLE IF NOT EXISTS User (employee_id INTEGER P
 
 var sqlInsertUser = "INSERT INTO User (employee_id, firstname, lastname, weekly_working_time, total_vacation_time, current_vacation_time, current_overtime, registration_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
+var sqlUpdateUser = "UPDATE User SET employee_id = ?, firstname = ?, lastname = ?, weekly_working_time = ?, total_vacation_time = ?, current_vacation_time = ?, current_overtime = ?, registration_date = ?";
+
+var sqlSelectUser = "SELECT * FROM User";
+
+var sqlCountUser = "SELECT count(*) AS row_count FROM User";
+
 /* 
 function initDatabase 
 Ensures that database is initialized and contains the required tables.
@@ -21,6 +27,8 @@ function initDatabase()
 {
 	createTables();
 	console.log("Database initilized");													//For debugging purposes
+	checkDatabase();
+	console.log("Form filled with current database content");							//For debugging purposes
 }
 
 /* 
@@ -36,6 +44,64 @@ function createTables()
 		tx.executeSql(sqlCreateTableUser, []);
 	});
 }
+
+/* 
+function checkDatabase
+Checks if database table User is already filled with content from the user and prepares the session storage accordingly, in order to allow the function createProfile to use the correct SQL syntax (INSERT if database emtpy, UPDATE if database already filled with user data). If database already contains user data, function fillForm is called in order to display this data in the html form.
+Function has to be called upon page load.
+*/
+function checkDatabase()
+{
+	database.transaction(function (tx) 
+	{ 
+		tx.executeSql(sqlCountUser, [], function(tx, res) 
+		{
+			row = res.rows.item(0);
+			
+			if(0 === row.row_count) {
+				console.log("DB empty");												//For debugging purposes
+				window.sessionStorage.setItem("userTable", "empty");		
+			} else {
+				console.log("DB filled");												//For debugging purposes
+				window.sessionStorage.setItem("userTable", "filled");
+				fillForm();
+			}
+		}); 
+	});
+}
+
+/* 
+function fillForm
+Reads the current content of database table User and fills the form in order to allow the user to edit the data.
+*/
+function fillForm()
+{
+	database.transaction(function (tx) 
+	{ 
+		tx.executeSql(sqlSelectUser, [], function(tx, res) 
+		{
+			row = res.rows.item(0);
+			
+			var tmpProfileIdRaw = document.getElementById("profile.id");
+			var tmpProfileForenameRaw = document.getElementById("profile.forename");
+			var tmpProfileSurnameRaw = document.getElementById("profile.surname");
+			var tmpProfileWeaklyWorkingTimeRaw = document.getElementById("profile.weekly_working_time");
+			var tmpProfileTotalVacationTimeRaw = document.getElementById("profile.total_vacation_time");
+			var tmpProfileCurrentOvertimeRaw = document.getElementById("profile.current_overtime");
+			var tmpProfileCurrentVacationTimeRaw = document.getElementById("profile.current_vacation_time");
+
+			tmpProfileIdRaw.value = row.employee_id;
+			tmpProfileForenameRaw.value = row.firstname;
+			tmpProfileSurnameRaw.value = row.lastname;
+			tmpProfileWeaklyWorkingTimeRaw.value = row.weekly_working_time;
+			tmpProfileTotalVacationTimeRaw.value = row.total_vacation_time;
+			tmpProfileCurrentOvertimeRaw.value = row.current_vacation_time;
+			tmpProfileCurrentVacationTimeRaw.value = row.current_overtime;
+		}); 
+	});
+}
+
+
 
 /* 
 function createProfile
@@ -62,10 +128,30 @@ function createProfile()
 	var tmpProfileCurrentVacationTime = tmpProfileCurrentVacationTimeRaw.value;
 	var currentTimestamp = Math.floor(Date.now() / 1000);
 	
-	console.log("Insert into Database");
-	
-	database.transaction(function (tx) { tx.executeSql(sqlInsertUser, [tmpProfileId, tmpProfileForename, tmpProfileSurname, tmpProfileWeaklyWorkingTime, tmpProfileTotalVacationTime, tmpProfileCurrentOvertime, tmpProfileCurrentVacationTime, currentTimestamp], function(tx, res) {
-		   console.log("Insert complete");
-		   window.location.replace("index.html?style=success&message=Profile%20created");
-       }); });
+	if ("empty" === window.sessionStorage.getItem("userTable"))
+	{
+		console.log("Insert into Database");
+		
+		database.transaction(function (tx) 
+		{ 
+			tx.executeSql(sqlInsertUser, [tmpProfileId, tmpProfileForename, tmpProfileSurname, tmpProfileWeaklyWorkingTime, tmpProfileTotalVacationTime, tmpProfileCurrentOvertime, tmpProfileCurrentVacationTime, currentTimestamp], function(tx, res) 
+			{
+				window.sessionStorage.removeItem("userTable");
+				console.log("Insert complete");
+				window.location.replace("index.html?style=success&message=Profile%20created");
+			}); 
+		});
+	} else {
+		console.log("Update Database");
+		
+		database.transaction(function (tx) 
+		{
+			tx.executeSql(sqlUpdateUser, [tmpProfileId, tmpProfileForename, tmpProfileSurname, tmpProfileWeaklyWorkingTime, tmpProfileTotalVacationTime, tmpProfileCurrentOvertime, tmpProfileCurrentVacationTime, currentTimestamp], function(tx, res) 
+			{
+				window.sessionStorage.removeItem("userTable");
+				console.log("Update complete");
+				window.location.replace("index.html?style=success&message=Profile%20updated");
+			}); 
+		});
+	}
 }
