@@ -5,13 +5,13 @@ console.log("Database opened");															//For debugging purposes
 
 /* SQL Queries */
 
-var sqlCreateTableProjects = "CREATE TABLE IF NOT EXISTS Projects (id INTEGER PRIMARY KEY, name TEXT)";
+var sqlCreateTableProjects = "CREATE TABLE IF NOT EXISTS Projects (id INTEGER PRIMARY KEY, name TEXT, is_displayed INTEGER, is_used INTEGER, is_archived INTEGER)";
 
 var sqlCreateTableSessions = "CREATE TABLE IF NOT EXISTS Sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, project_id INTEGER, timestamp_start INTEGER, timestamp_stop INTEGER)";
 
 var sqlCreateTableUser = "CREATE TABLE IF NOT EXISTS User (employee_id INTEGER PRIMARY KEY, lastname TEXT, firstname TEXT, weekly_working_time INTEGER, total_vacation_time INTEGER, current_vacation_time INTEGER, current_overtime INTEGER, registration_date INTEGER)";
 
-var sqlInsertProjects = "INSERT INTO Projects (id, name) VALUES (?, ?)";
+var sqlInsertProjects = "INSERT INTO Projects (id, name, is_displayed, is_used, is_archived) VALUES (?, ?, 1, 1, 0)";
 
 /* 
 function initDatabase 
@@ -62,8 +62,12 @@ function insertProject()
 	var tmpProjectId = tmpProjectIdRaw.value;
 	var tmpProjectName =tmpProjectNameRaw.value;
 	console.log("Insert into Database");
-	database.transaction(function (tx) { tx.executeSql(sqlInsertProjects, [tmpProjectId, tmpProjectName], function(tx, res) {
-		   console.log("Insert complete");
-		   window.location.replace("index.html?style=success&message=Project%20" + tmpProjectName + "%20added");
-       }); });
+	database.transaction(function (tx) 
+	{
+		tx.executeSql(sqlInsertProjects, [tmpProjectId, tmpProjectName], function(tx, res) 
+		{
+			console.log("Insert complete");
+			window.location.replace("index.html?style=success&message=Project%20" + tmpProjectName + "%20added");
+		}); 
+	});
 }

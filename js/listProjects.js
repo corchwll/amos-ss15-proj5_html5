@@ -5,7 +5,7 @@ console.log("Database opened");															//For debugging purposes
 
 /* SQL Queries */
 
-var sqlCreateTableProjects = "CREATE TABLE IF NOT EXISTS Projects (id INTEGER PRIMARY KEY, name TEXT)";
+var sqlCreateTableProjects = "CREATE TABLE IF NOT EXISTS Projects (id INTEGER PRIMARY KEY, name TEXT, is_displayed INTEGER, is_used INTEGER, is_archived INTEGER)";
 
 var sqlCreateTableSessions = "CREATE TABLE IF NOT EXISTS Sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, project_id INTEGER, timestamp_start INTEGER, timestamp_stop INTEGER)";
 
@@ -14,7 +14,17 @@ var sqlCreateTableUser = "CREATE TABLE IF NOT EXISTS User (employee_id INTEGER P
 var sqlCreateViewTimes = "CREATE VIEW IF NOT EXISTS Aggregated_Times AS SELECT project_id, SUM(timestamp_stop - timestamp_start) AS aggregated_time FROM Sessions GROUP BY project_id"; 
 /* WHERE timestamp_stop != 0 AND timestamp_start != 0 AND timestamp_stop IS NOT NULL AND timestamp_start IS NOT NULL GROUP BY project_id"; */
 
-var sqlSelectAllProjectsWithTimes = "SELECT Projects.id, Projects.name, Aggregated_Times.aggregated_time FROM Projects LEFT JOIN Aggregated_Times ON Projects.id = Aggregated_Times.project_id";
+var sqlSelectAllProjectsWithTimes = "SELECT Projects.id, Projects.name, Projects.is_displayed, Projects.is_used, Aggregated_Times.aggregated_time FROM Projects LEFT JOIN Aggregated_Times ON Projects.id = Aggregated_Times.project_id";
+
+var sqlInsertStandardProjectIllness = "INSERT INTO Projects (id, name, is_displayed, is_used, is_archived) VALUES ('1', 'Illness', '1', '0', '0')";
+
+var sqlInsertStandardProjectTraining = "INSERT INTO Projects (id, name, is_displayed, is_used, is_archived) VALUES ('2', 'Training', '1', '1', '0')";
+
+var sqlInsertStandardProjectHoliday = "INSERT INTO Projects (id, name, is_displayed, is_used, is_archived) VALUES ('3', 'Holiday', '1', '0', '0')";
+
+var sqlCheckStandardProjects = "SELECT * FROM Projects WHERE (name = 'Illness' AND id = 1) OR (name = 'Training' AND id = 2) OR (name = 'Holiday' AND id = 3)";
+
+var sqlDeleteStandardProjects = "DELETE FROM Projects WHERE name = 'Illness' OR name = 'Training' OR name = 'Holiday'";
 
 /* 
 function initDatabase 
@@ -22,8 +32,9 @@ Ensures that database is initialized and contains the required tables and views.
 */
 function getProjectsFromDatabase() 
 {
-	printNotification();
 	createTablesAndViews();
+	checkStandardProjects();
+	printNotification();
 	console.log("Database initilized");													//For debugging purposes
 	listProjects();
 }
@@ -44,6 +55,41 @@ function createTablesAndViews()
 }
 
 /* 
+function checkStandardProjects
+Checks if the predefined standard projects are already in the database and calls function addStandardProject, if they are not already in the database.
+*/
+function checkStandardProjects()
+{
+	database.transaction(function (tx) 
+	{
+		tx.executeSql(sqlCheckStandardProjects, [], function(tx, res) 
+		{
+			if (res.rows.length !== 3) 
+			{
+				tx.executeSql(sqlDeleteStandardProjects, [], function(tx, res) 
+				{
+					addStandardProject(sqlInsertStandardProjectIllness);
+					addStandardProject(sqlInsertStandardProjectTraining);
+					addStandardProject(sqlInsertStandardProjectHoliday);
+				});
+			}
+		}); 
+	});
+}
+
+/*
+function addStandardProject
+Generic execution of SQL code given as parameter. However, only able to process SQL code without wild cards (question marks) or returns. (Thus only Insert or Updates possible).
+*/
+function addStandardProject(sqlCode)
+{
+	database.transaction(function (tx)
+	{
+		tx.executeSql(sqlCode, []);
+	});
+}
+
+/* 
 function listProjects
 Lists all projects currently saved in the database table Projects and generates the required html-code for each project to allow their representation on the start page (index.html)
 */
@@ -53,21 +99,40 @@ function listProjects()
 	{
 		console.log("the time: " + row.aggregated_time);
 
-		return '<div class="panel panel-default">' +
-			'<div class="panel-heading" role="tab" id="' + row.id + '" data-toggle="collapse" data-parent="#ProjectList" href="#' + row.id + 'body" aria-expanded="true" aria-controls="collapseOne" onclick="">' +
-				'<h4 class="panel-title">' +
-					row.name +
-				'</h4>' +
-			'</div>' +
-			'<div id="' + row.id + 'body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">' +
-				'<p>' +
-					'<input class="btn btn-default" id="' + row.id + 'counter" value="0:0:0" />' +
-					'<button class="btn btn-success" onclick="start(' + row.id + ')"><span class="glyphicon glyphicon-play"></span></button>' +
-					'<button class="btn btn-danger" onclick="stop(' + row.id + ')"><span class="glyphicon glyphicon-stop"></span></button>' +
-					'<button class="btn btn-info" onclick="addSessionForProject(&quot;' + row.id + '&quot;, &quot;' + row.name + '&quot;)"><span class="glyphicon glyphicon-plus"></span></button>' +
-				'</p>' +	
-			'</div>' +
-		'</div>';
+		if(0 === row.is_displayed) 
+		{
+			return '';
+		} else if (0 === row.is_used) {
+			return '<div class="panel panel-default">' +
+				'<div class="panel-heading" role="tab" id="' + row.id + '" data-toggle="collapse" data-parent="#ProjectList" href="#' + row.id + 'body" aria-expanded="true" aria-controls="collapseOne" onclick="">' +
+					'<h4 class="panel-title">' +
+						row.name +
+					'</h4>' +
+				'</div>' +
+				'<div id="' + row.id + 'body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">' +
+					'<p>' +
+						'<button class="btn btn-info" onclick="addSessionForProject(&quot;' + row.id + '&quot;, &quot;' + row.name + '&quot;)"><span class="glyphicon glyphicon-plus"></span></button>' +
+					'</p>' +	
+				'</div>' +
+			'</div>';
+
+		} else {
+			return '<div class="panel panel-default">' +
+				'<div class="panel-heading" role="tab" id="' + row.id + '" data-toggle="collapse" data-parent="#ProjectList" href="#' + row.id + 'body" aria-expanded="true" aria-controls="collapseOne" onclick="">' +
+					'<h4 class="panel-title">' +
+						row.name +
+					'</h4>' +
+				'</div>' +
+				'<div id="' + row.id + 'body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">' +
+					'<p>' +
+						'<input class="btn btn-default" id="' + row.id + 'counter" value="0:0:0" />' +
+						'<button class="btn btn-success" onclick="start(' + row.id + ')"><span class="glyphicon glyphicon-play"></span></button>' +
+						'<button class="btn btn-danger" onclick="stop(' + row.id + ')"><span class="glyphicon glyphicon-stop"></span></button>' +
+						'<button class="btn btn-info" onclick="addSessionForProject(&quot;' + row.id + '&quot;, &quot;' + row.name + '&quot;)"><span class="glyphicon glyphicon-plus"></span></button>' +
+					'</p>' +	
+				'</div>' +
+			'</div>';
+		}
 	};
 
 	var render = function(tx, rs)
