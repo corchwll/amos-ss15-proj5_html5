@@ -8,10 +8,21 @@
 		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="css/index.css" />  
 		<script src="js/listProjects.js"></script>
-
         <title>MobileTimeRecording</title>
     </head>
     <body onload="getProjectsFromDatabase()">
+		<!-- Navbar -->
+        <div class="container" id="includeNavbar">
+			<div class="row navbar-row">
+				<div class="col-xs-12">
+					<div class="btn-group btn-group-3">
+						<a href="index.html" class="btn btn-default"><span class="glyphicon glyphicon-home"></span><span class="glyphicon-class">Home</span></a>
+						<a class="btn btn-default"><span class="glyphicon glyphicon-list-alt"></span><span class="glyphicon-class">Overview</span></a>
+						<a class="btn btn-default"><span class="glyphicon glyphicon-cog"></span><span class="glyphicon-class">Settings</span></a>
+					</div>
+				</div>
+			</div>
+		</div>
         <!-- project list container -->
         <div class="container">
             <div class="row">
@@ -43,7 +54,7 @@
             </div>
         </div>
 
-        <script src="js/jquery-2.1.3.min.js"></script>
+		<script src="js/jquery-2.1.3.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/recordTime.js"></script>
 		
