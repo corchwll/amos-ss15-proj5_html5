@@ -81,6 +81,6 @@ function addSession()
 			   window.location.replace("index.html?style=success&message=Session%20added%20for%20" + projectName);
 		   }); });
 	} else {
-		window.location.replace("index.html?style=danger&message=Negative%20times%20are%20not%20allowed" + projectName);
+		window.location.replace("index.html?style=danger&message=negative%20times%20are%20not%20allowed");
 	}
 }
