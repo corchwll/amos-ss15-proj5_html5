@@ -45,73 +45,75 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-horizontal">
-                        <!-- Form Name -->
-                        <legend>Edit profile</legend>
+						<form action="createProfile()">
+							<!-- Form Name -->
+							<legend>Edit profile</legend>
 
-                        <!-- Text input-->
-                        <div class="form-group">
-                            <label class="col-md-4 control-label" for="profile.id">Personal ID</label>
-                            <div class="col-md-4">
-                                <input id="profile.id" name="profile.id" type="text" placeholder="Please enter your personal ID" class="form-control input-md">
-                            </div>
-                        </div>
+							<!-- Text input-->
+							<div class="form-group">
+								<label class="col-md-4 control-label" for="profile.id">Personal ID</label>
+								<div class="col-md-4">
+									<input id="profile.id" name="profile.id" type="text" placeholder="Please enter your personal ID" class="form-control input-md" required>
+								</div>
+							</div>
 
-                        <!-- Text input-->
-                        <div class="form-group">
-                            <label class="col-md-4 control-label" for="profile.forename">Forename</label>
-                            <div class="col-md-4">
-                                <input id="profile.forename" name="profile.forename" type="text" placeholder="Please enter your forename" class="form-control input-md">
-                            </div>
-                        </div>
-						
-						<!-- Text input-->
-                        <div class="form-group">
-                            <label class="col-md-4 control-label" for="profile.surname">Surname</label>
-                            <div class="col-md-4">
-                                <input id="profile.surname" name="profile.surname" type="text" placeholder="Please enter your surname" class="form-control input-md">
-                            </div>
-                        </div>
-						
-						<!-- Text input-->
-                        <div class="form-group">
-                            <label class="col-md-4 control-label" for="profile.weekly_working_time">Weekly Working Time</label>
-                            <div class="col-md-4">
-                                <input id="profile.weekly_working_time" name="profile.weekly_working_time" type="text" placeholder="Please enter your weekly working time" class="form-control input-md">
-                            </div>
-                        </div>
-						
-						<!-- Text input-->
-                        <div class="form-group">
-                            <label class="col-md-4 control-label" for="profile.total_vacation_time">Vacation Time</label>
-                            <div class="col-md-4">
-                                <input id="profile.total_vacation_time" name="profile.total_vacation_time" type="text" placeholder="Please enter your vacation time" class="form-control input-md">
-                            </div>
-                        </div>
-						
-						<!-- Text input-->
-                        <div class="form-group">
-                            <label class="col-md-4 control-label" for="profile.current_overtime">Current Overtime Hours</label>
-                            <div class="col-md-4">
-                                <input id="profile.current_overtime" name="profile.current_overtime" type="text" placeholder="Please enter your current overtime hours" class="form-control input-md">
-                            </div>
-                        </div>
-						
-						<!-- Text input-->
-                        <div class="form-group">
-                            <label class="col-md-4 control-label" for="profile.current_vacation_time">Current Vacation Days</label>
-                            <div class="col-md-4">
-                                <input id="profile.current_vacation_time" name="profile.current_vacation_time" type="text" placeholder="Please enter your current vacation days" class="form-control input-md">
-                            </div>
-                        </div>
+							<!-- Text input-->
+							<div class="form-group">
+								<label class="col-md-4 control-label" for="profile.forename">Forename</label>
+								<div class="col-md-4">
+									<input id="profile.forename" name="profile.forename" type="text" placeholder="Please enter your forename" class="form-control input-md" required>
+								</div>
+							</div>
+							
+							<!-- Text input-->
+							<div class="form-group">
+								<label class="col-md-4 control-label" for="profile.surname">Surname</label>
+								<div class="col-md-4">
+									<input id="profile.surname" name="profile.surname" type="text" placeholder="Please enter your surname" class="form-control input-md" required>
+								</div>
+							</div>
+							
+							<!-- Text input-->
+							<div class="form-group">
+								<label class="col-md-4 control-label" for="profile.weekly_working_time">Weekly Working Time</label>
+								<div class="col-md-4">
+									<input id="profile.weekly_working_time" name="profile.weekly_working_time" type="text" placeholder="Please enter your weekly working time" class="form-control input-md" required>
+								</div>
+							</div>
+							
+							<!-- Text input-->
+							<div class="form-group">
+								<label class="col-md-4 control-label" for="profile.total_vacation_time">Vacation Time</label>
+								<div class="col-md-4">
+									<input id="profile.total_vacation_time" name="profile.total_vacation_time" type="text" placeholder="Please enter your vacation time" class="form-control input-md" required>
+								</div>
+							</div>
+							
+							<!-- Text input-->
+							<div class="form-group">
+								<label class="col-md-4 control-label" for="profile.current_overtime">Current Overtime Hours</label>
+								<div class="col-md-4">
+									<input id="profile.current_overtime" name="profile.current_overtime" type="text" placeholder="Please enter your current overtime hours" class="form-control input-md" required>
+								</div>
+							</div>
+							
+							<!-- Text input-->
+							<div class="form-group">
+								<label class="col-md-4 control-label" for="profile.current_vacation_time">Current Vacation Days</label>
+								<div class="col-md-4">
+									<input id="profile.current_vacation_time" name="profile.current_vacation_time" type="text" placeholder="Please enter your current vacation days" class="form-control input-md" required />
+								</div>
+							</div>
 
-                        <!-- Button (Double) -->
-                        <div class="form-group">
-                            <label class="col-md-4 control-label"></label>
-                            <div class="col-md-8">
-                                <button class="btn btn-info" onclick="createProfile()">Save</button>
-                                <a href="index.html" id="cancel" name="cancel" class="btn btn-danger">Return to main screen</a>
-                            </div>
-                        </div>
+							<!-- Button (Double) -->
+							<div class="form-group">
+								<label class="col-md-4 control-label"></label>
+								<div class="col-md-8">
+									<button type="submit" class="btn btn-info">Save</button>
+									<a href="index.html" id="cancel" name="cancel" class="btn btn-danger">Return to main screen</a>
+								</div>
+							</div>
+						</form>
                     </div>
                 </div>
             </div>

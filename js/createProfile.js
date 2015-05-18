@@ -31,6 +31,29 @@ function initDatabase()
 	console.log("Form filled with current database content");							//For debugging purposes
 }
 
+/*
+Event listener for customized notification if user does not fill out every required field.
+*/
+document.addEventListener("DOMContentLoaded", function() 
+{
+    var elements = document.getElementsByTagName("INPUT");
+    for (var i = 0; i < elements.length; i++) 
+		{
+        elements[i].oninvalid = function(e) 
+		{
+            e.target.setCustomValidity("");
+            if (!e.target.validity.valid) 
+			{
+                e.target.setCustomValidity("please fill out every field");
+            }
+        };
+        elements[i].oninput = function(e) 
+		{
+            e.target.setCustomValidity("");
+        };
+    }
+})
+
 /* 
 function createTables
 Creates the required tables for the database.
