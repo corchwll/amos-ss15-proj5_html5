@@ -32,7 +32,8 @@ function initDatabase()
 }
 
 /*
-Event listener for customized notification if user does not fill out every required field.
+Event listener for customized notification if user does not fill out every required field. 
+For fields with specific value range, the particular notification message is further customized.
 */
 document.addEventListener("DOMContentLoaded", function() 
 {
@@ -44,7 +45,15 @@ document.addEventListener("DOMContentLoaded", function()
             e.target.setCustomValidity("");
             if (!e.target.validity.valid) 
 			{
-                e.target.setCustomValidity("please fill out every field");
+				if("profile.weekly_working_time" === e.target.name && "" != e.target.value) {
+					e.target.setCustomValidity("please check your inputs");
+				} else if("profile.total_vacation_time" === e.target.name && "" != e.target.value) {
+					e.target.setCustomValidity("please check your inputs");
+				} else if("profile.current_vacation_time" === e.target.name && "" != e.target.value) {
+					e.target.setCustomValidity("please check your inputs");
+				} else {	//Standard (empty field)
+					e.target.setCustomValidity("please fill out every field");
+				}
             }
         };
         elements[i].oninput = function(e) 
