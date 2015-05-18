@@ -26,6 +26,8 @@ var sqlCheckStandardProjects = "SELECT * FROM Projects WHERE (name = 'Illness' A
 
 var sqlDeleteStandardProjects = "DELETE FROM Projects WHERE name = 'Illness' OR name = 'Training' OR name = 'Holiday'";
 
+var sqlArchiveProject = "UPDATE Projects SET is_displayed = '0', is_archived = '1' WHERE id = ?";
+
 /* 
 function initDatabase 
 Ensures that database is initialized and contains the required tables and views.
@@ -102,36 +104,56 @@ function listProjects()
 		if(0 === row.is_displayed) 
 		{
 			return '';
-		} else if (0 === row.is_used) {
-			return '<div class="panel panel-default">' +
-				'<div class="panel-heading" role="tab" id="' + row.id + '" data-toggle="collapse" data-parent="#ProjectList" href="#' + row.id + 'body" aria-expanded="true" aria-controls="collapseOne" onclick="">' +
-					'<h4 class="panel-title">' +
-						row.name +
-					'</h4>' +
-				'</div>' +
-				'<div id="' + row.id + 'body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">' +
-					'<p>' +
-						'<button class="btn btn-info" onclick="addSessionForProject(&quot;' + row.id + '&quot;, &quot;' + row.name + '&quot;)"><span class="glyphicon glyphicon-plus"></span></button>' +
-					'</p>' +	
-				'</div>' +
-			'</div>';
-
+		} else if (1 === row.id || 2 === row.id || 3 === row.id) {
+			if (0 === row.is_used) {
+				return '<div class="panel panel-default">' +
+					'<div class="panel-heading" role="tab" id="' + row.id + '" data-toggle="collapse" data-parent="#ProjectList" href="#' + row.id + 'body" aria-expanded="true" aria-controls="collapseOne" onclick="">' +
+						'<h4 class="panel-title">' +
+							row.name +
+						'</h4>' +
+					'</div>' +
+					'<div id="' + row.id + 'body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">' +
+						'<p>' +
+							'<button class="btn btn-info" onclick="addSessionForProject(&quot;' + row.id + '&quot;, &quot;' + row.name + '&quot;)"><span class="glyphicon glyphicon-plus"></span></button>' +
+						'</p>' +	
+					'</div>' +
+				'</div>';
+			} else {
+				return '<div class="panel panel-default">' +
+					'<div class="panel-heading" role="tab" id="' + row.id + '" data-toggle="collapse" data-parent="#ProjectList" href="#' + row.id + 'body" aria-expanded="true" aria-controls="collapseOne" onclick="">' +
+						'<h4 class="panel-title">' +
+							row.name +
+						'</h4>' +
+					'</div>' +
+					'<div id="' + row.id + 'body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">' +
+						'<p>' +
+							'<input class="btn btn-default" id="' + row.id + 'counter" value="0:0:0" />' +
+							'<button class="btn btn-success" onclick="start(' + row.id + ')"><span class="glyphicon glyphicon-play"></span></button>' +
+							'<button class="btn btn-danger" onclick="stop(' + row.id + ')"><span class="glyphicon glyphicon-stop"></span></button>' +
+							'<button class="btn btn-info" onclick="addSessionForProject(&quot;' + row.id + '&quot;, &quot;' + row.name + '&quot;)"><span class="glyphicon glyphicon-plus"></span></button>' +
+						'</p>' +	
+					'</div>' +
+				'</div>';
+			}
 		} else {
-			return '<div class="panel panel-default">' +
-				'<div class="panel-heading" role="tab" id="' + row.id + '" data-toggle="collapse" data-parent="#ProjectList" href="#' + row.id + 'body" aria-expanded="true" aria-controls="collapseOne" onclick="">' +
-					'<h4 class="panel-title">' +
-						row.name +
-					'</h4>' +
-				'</div>' +
-				'<div id="' + row.id + 'body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">' +
-					'<p>' +
-						'<input class="btn btn-default" id="' + row.id + 'counter" value="0:0:0" />' +
-						'<button class="btn btn-success" onclick="start(' + row.id + ')"><span class="glyphicon glyphicon-play"></span></button>' +
-						'<button class="btn btn-danger" onclick="stop(' + row.id + ')"><span class="glyphicon glyphicon-stop"></span></button>' +
-						'<button class="btn btn-info" onclick="addSessionForProject(&quot;' + row.id + '&quot;, &quot;' + row.name + '&quot;)"><span class="glyphicon glyphicon-plus"></span></button>' +
-					'</p>' +	
-				'</div>' +
-			'</div>';
+				return '<div class="panel panel-default">' +
+					'<div class="panel-heading" role="tab" id="' + row.id + '" data-toggle="collapse" data-parent="#ProjectList" href="#' + row.id + 'body" aria-expanded="true" aria-controls="collapseOne" onclick="">' +
+						'<h4 class="panel-title">' +
+							row.name +
+						'</h4>' +
+					'</div>' +
+					'<div id="' + row.id + 'body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">' +
+						'<p>' +
+							'<input class="btn btn-default" id="' + row.id + 'counter" value="0:0:0" />' +
+						'</p>' +
+						'<p>' +
+							'<button class="btn btn-success" onclick="start(' + row.id + ')"><span class="glyphicon glyphicon-play"></span></button>' +
+							'<button class="btn btn-danger" onclick="stop(' + row.id + ')"><span class="glyphicon glyphicon-stop"></span></button>' +
+							'<button class="btn btn-info" onclick="addSessionForProject(&quot;' + row.id + '&quot;, &quot;' + row.name + '&quot;)"><span class="glyphicon glyphicon-plus"></span></button>' +
+							'<button class="btn btn-danger" onclick="showDeleteConfirmation(' + row.id +')"><span class="glyphicon glyphicon-trash"></span></button>' +
+						'</p>' +	
+					'</div>' +
+				'</div>';
 		}
 	};
 
@@ -158,10 +180,51 @@ function listProjects()
 function addSessionForProject
 This function locally stores the information on which project the user chooses in order to add a session for the project. Furthermore, the function forwards after the storage process to the required page.
 */
-function addSessionForProject(projectId, projectName) {
+function addSessionForProject(projectId, projectName) 
+{
 	window.sessionStorage.setItem("projectId", projectId);
 	window.sessionStorage.setItem("projectName", projectName);
 	window.location.replace("addSession.html");
+}
+
+/*
+function showDeleteConfirmation
+Shows a confirmation modal if the delete button is pressed.
+*/
+function showDeleteConfirmation(projectId) 
+{
+	document.getElementById("deleteProjectModal").innerHTML = 
+		'<div class="modal-dialog">' +
+    '<div class="modal-content">' +
+        '<div class="modal-header">' +
+            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+            '<h4 class="modal-title">Confirmation</h4>' +
+        '</div>' +
+        '<div class="modal-body">' +
+            '<p>Are you sure?</p>' +
+        '</div>' +
+        '<div class="modal-footer">' +
+            '<button type="button" class="btn btn-default" data-dismiss="modal">No</button>' +
+            '<button type="button" class="btn btn-primary" onclick="deleteProject(' + projectId + ')">Yes</button>' +
+        '</div>' +
+    '</div>' +
+	'</div>';
+	$("#deleteProjectModal").modal('show');
+}
+
+/*
+function deleteProject
+Sets the is_archived flag to 1 and the is_displayed to 0 for the passed projectId. Thereby, the project is no longer displayed by the listProjects function.
+ */
+function deleteProject(projectId)
+{
+	database.transaction(function(tx)
+	{
+		tx.executeSql(sqlArchiveProject, [projectId], function(tx, results)
+		{
+			window.location = "index.html";
+		}, onError);
+	});
 }
 
 /*
