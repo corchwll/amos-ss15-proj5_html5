@@ -45,12 +45,15 @@ document.addEventListener("DOMContentLoaded", function()
             e.target.setCustomValidity("");
             if (!e.target.validity.valid) 
 			{
-				if("profile.weekly_working_time" === e.target.name && "" != e.target.value) {
+				if("profile.weekly_working_time" === e.target.name && "" != e.target.value) 
+				{
 					e.target.setCustomValidity("please check your inputs");
 				} else if("profile.total_vacation_time" === e.target.name && "" != e.target.value) {
 					e.target.setCustomValidity("please check your inputs");
 				} else if("profile.current_vacation_time" === e.target.name && "" != e.target.value) {
 					e.target.setCustomValidity("please check your inputs");
+				} else if("profile.id" === e.target.name && e.target.value.length > 0) {
+					e.target.setCustomValidity("Your personal ID must consist of 5 numbers");
 				} else {	//Standard (empty field)
 					e.target.setCustomValidity("please fill out every field");
 				}
