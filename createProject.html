@@ -45,33 +45,35 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-horizontal">
-                        <!-- Form Name -->
-                        <legend>Create a new Project</legend>
+						<form action="javascript:insertProject()">
+							<!-- Form Name -->
+							<legend>Create a new Project</legend>
 
-                        <!-- Text input-->
-                        <div class="form-group">
-                            <label class="col-md-4 control-label" for="project.id">Project ID</label>
-                            <div class="col-md-4">
-                                <input id="project.id" name="project.id" type="text" placeholder="Please enter the project ID" class="form-control input-md">
-                            </div>
-                        </div>
+							<!-- Text input-->
+							<div class="form-group">
+								<label class="col-md-4 control-label" for="project.id">Project ID</label>
+								<div class="col-md-4">
+									<input id="project.id" name="project.id" type="text" placeholder="Please enter the project ID" class="form-control input-md" required pattern="\d\d\d\d\d">
+								</div>
+							</div>
 
-                        <!-- Text input-->
-                        <div class="form-group">
-                            <label class="col-md-4 control-label" for="project.name">Project name</label>
-                            <div class="col-md-4">
-                                <input id="project.name" name="project.name" type="text" placeholder="Please enter the project name" class="form-control input-md">
-                            </div>
-                        </div>
+							<!-- Text input-->
+							<div class="form-group">
+								<label class="col-md-4 control-label" for="project.name">Project name</label>
+								<div class="col-md-4">
+									<input id="project.name" name="project.name" type="text" placeholder="Please enter the project name" class="form-control input-md" required>
+								</div>
+							</div>
 
-                        <!-- Button (Double) -->
-                        <div class="form-group">
-                            <label class="col-md-4 control-label"></label>
-                            <div class="col-md-8">
-                                <button class="btn btn-info" onclick="insertProject()">Save</button>
-                                <a href="index.html" id="cancel" name="cancel" class="btn btn-danger">Return to main screen</a>
-                            </div>
-                        </div>
+							<!-- Button (Double) -->
+							<div class="form-group">
+								<label class="col-md-4 control-label"></label>
+								<div class="col-md-8">
+									<button class="btn btn-info">Save</button>
+									<a href="index.html" id="cancel" name="cancel" class="btn btn-danger">Return to main screen</a>
+								</div>
+							</div>
+						</form>
                     </div>
                 </div>
             </div>
