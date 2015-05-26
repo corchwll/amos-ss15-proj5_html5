@@ -1,0 +1,27 @@
+CACHE MANIFEST
+
+
+CACHE:
+index.html
+css/app.min.css
+css/hover.min.css
+css/responsive.min.css
+fonts/fontawesome-webfont.eot
+fonts/fontawesome-webfont.svg
+fonts/fontawesome-webfont.ttf
+fonts/fontawesome-webfont.woff
+fonts/glyphicons-halflings-regular.eot
+fonts/glyphicons-halflings-regular.svg
+fonts/glyphicons-halflings-regular.ttf
+fonts/glyphicons-halflings-regular.woff
+fonts/glyphicons-halflings-regular.woff2
+js/app.min.js
+js/app.min.js.map
+
+
+NETWORK:
+http://*
+https://*
+*
+
+# hash: cd4424b6c3e5f907e21d43019b0e50d518edc449be3ba5a74040432f28f392eb
