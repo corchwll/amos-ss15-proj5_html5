@@ -60,10 +60,10 @@ angular.module('MobileTimeRecording.services.Database', ['MobileTimeRecording.co
     self.populate = function() {
         self.all().then(function(projects) {
             if(projects.length < 1) {
-                DB.query("INSERT INTO Projects (id, name, is_displayed, is_used, is_archived) VALUES (?, ?, ?, ?, ?)", ['00001', 'Illness', 1, 0, 0]);
-                DB.query("INSERT INTO Projects (id, name, is_displayed, is_used, is_archived) VALUES (?, ?, ?, ?, ?)", ['00002', 'Training', 1, 1, 0]);
-                DB.query("INSERT INTO Projects (id, name, is_displayed, is_used, is_archived) VALUES (?, ?, ?, ?, ?)", ['00003', 'Holiday', 1, 0, 0]);
-                DB.query("INSERT INTO Projects (id, name, is_displayed, is_used, is_archived) VALUES (?, ?, ?, ?, ?)", ['00004', 'Office', 1, 1, 0]);
+                DB.query("INSERT INTO Projects (id, name, is_displayed, is_used, is_archived) VALUES (?, ?, ?, ?, ?)", ['00001', 'Holiday', 1, 0, 0]);
+                DB.query("INSERT INTO Projects (id, name, is_displayed, is_used, is_archived) VALUES (?, ?, ?, ?, ?)", ['00002', 'Illness', 1, 0, 0]);
+                DB.query("INSERT INTO Projects (id, name, is_displayed, is_used, is_archived) VALUES (?, ?, ?, ?, ?)", ['00003', 'Office', 1, 1, 0]);
+                DB.query("INSERT INTO Projects (id, name, is_displayed, is_used, is_archived) VALUES (?, ?, ?, ?, ?)", ['00004', 'Training', 1, 1, 0]);
             }
         });
     };
