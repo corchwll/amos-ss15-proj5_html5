@@ -15,8 +15,16 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'src/js/**/*.js',
-      'test/**/*.js'
+      './bower_components/moment/moment.js',
+      './bower_components/angular/angular.js',
+      './bower_components/angular-mocks/angular-mocks.js',
+      './bower_components/jquery/dist/jquery.js',
+      './bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+      './bower_components/angular-bootstrap-datetimepicker-directive/angular-bootstrap-datetimepicker-directive.js',
+      './bower_components/mobile-angular-ui/dist/js/mobile-angular-ui.js',
+      './bower_components/bootstrap/dist/js/bootstrap.js',
+      {pattern: 'src/js/**/*.js', included: false},
+      {pattern: 'test/**/*.js', included: false}
     ],
 
 
@@ -51,7 +59,7 @@ module.exports = function(config) {
 
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: false,
+    autoWatch: true,
 
 
     // start these browsers
