@@ -37,6 +37,12 @@ angular.module('MobileTimeRecording.controllers.ViewProject', ['MobileTimeRecord
 		});
 	};
 
+	$scope.calculateSessionDuration = function(session) {
+		var start = moment.unix(session.timestamp_start);
+		var stop = moment.unix(session.timestamp_stop);
+		return moment.utc(stop.diff(start)).format("HH:mm");
+	};
+
 	var deleteSession = function(sessionId) {
 		Sessions.remove(sessionId).then(function() {
 			$scope.updateSessions();
@@ -83,8 +89,7 @@ angular.module('MobileTimeRecording.controllers.ViewProject', ['MobileTimeRecord
 	    var timeDiff = new Date().getTime() - startTime;
 
 	    if(state === 1) {
-	        // $scope.counter = formatTime(timeDiff);
-	        $scope.counter = moment(timeDiff).subtract(1, 'hour').format("HH:mm:ss");
+	        $scope.counter = moment.utc(timeDiff).format("HH:mm:ss");
 	        $timeout(function() {
 	        	timer(startTime, projectId);
 	        }, 10);
