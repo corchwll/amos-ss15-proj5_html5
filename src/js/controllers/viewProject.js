@@ -11,7 +11,7 @@ angular.module('MobileTimeRecording.controllers.ViewProject', ['MobileTimeRecord
 		});
 	};
 
-		$scope.updateSessions = function() {
+	$scope.updateSessions = function() {
 		Sessions.getByProjectId($routeParams.projectId).then(function(sessions) {
 			$scope.sessions = sessions;
 		});
