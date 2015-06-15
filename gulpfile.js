@@ -72,6 +72,7 @@ var gulp           = require('gulp'),
     streamqueue    = require('streamqueue'),
     rename         = require('gulp-rename'),
     path           = require('path'),
+    license        = require('gulp-license'),
     manifest       = require('gulp-manifest');
 
 
@@ -115,6 +116,19 @@ gulp.task('connect', function() {
   } else {
     throw new Error('Connect is not configured');
   }
+});
+
+/*=============================================
+=            Run Karma tests                  =
+=============================================*/
+
+gulp.task('test', function (done) {
+  karma.start({
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: true
+  }, function() {
+    done();
+  });
 });
 
 
@@ -196,6 +210,7 @@ gulp.task('less', function () {
     }))
     .pipe(cssmin())
     .pipe(rename({suffix: '.min'}))
+    .pipe(license('gpl3', {tiny: false, project: 'MobileTimeRecording', organization: 'AMOS Team 5 SS15'}))
     .pipe(gulp.dest(path.join(config.dest, 'css')));
 });
 
@@ -218,6 +233,7 @@ gulp.task('js', function() {
     .pipe(uglify())
     .pipe(rename({suffix: '.min'}))
     .pipe(sourcemaps.write('.'))
+    .pipe(license('gpl3', {tiny: false, project: 'MobileTimeRecording', organization: 'AMOS Team 5 SS15'}))
     .pipe(gulp.dest(path.join(config.dest, 'js')));
 });
 
