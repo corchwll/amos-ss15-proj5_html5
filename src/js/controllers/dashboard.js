@@ -16,6 +16,10 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		}
 	}
 
+	/**
+	 * This function calls the individual functions required to update the dashboard view.
+	 * 
+	 */
 	$scope.updateDashboard = function() {
 		getOvertime();
 		getLeftVacationDays();
@@ -23,6 +27,10 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		generateCsv();
 	};
 
+	/**
+	 * This function computes the current overtime of the user.
+	 * 
+	 */
 	var getOvertime = function() {
 		var hoursPerDay;
 		var overTimeInHours = 0;
@@ -66,6 +74,12 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		});		
 	};
 
+	/**
+	 * This function adds up the working time of a given set of sessions.
+	 * 
+	 * @param   sessions An object containing data of one or multiple sessions
+	 * @return           The overall working time of the given sessions in seconds
+	 */
 	var sumUpSessions = function(sessions) {
 		var recordedTimeInSecs = 0;
 
@@ -76,6 +90,13 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		return recordedTimeInSecs;
 	};
 
+	/**
+	 * This function computes the number of working days in a given timeframe
+	 * 
+	 * @param   startDate The date of the beginning of the timeframe
+	 * @param   stopDate  The date of the end of the timeframe
+	 * @return            The number of working days
+	 */
 	var calculateWorkdays = function(startDate, stopDate) {
 		//backup on which weekday the intervall started
 		var startWeekDay = moment(startDate).format("d");
@@ -106,6 +127,13 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		return parseInt(workDays) - parseInt(startWeekDay) + parseInt(stopWeekDay) + 1;
 	};
 
+	/**
+	 * This function computes the number of holidays in a given timeframe
+	 * 
+	 * @param   startDate The date of the beginning of the timeframe
+	 * @param   stopDate  The date of the end of the timeframe
+	 * @return            The number of holidays
+	 */
 	var getHolidays = function(startDate, stopDate) {
 		var amountOfHolidays = 0;
 
@@ -133,6 +161,12 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		return amountOfHolidays;
 	};
 
+	/**
+	 * This function computes the dates of holidays in a given year
+	 * 
+	 * @param   year The year of which the holidays should be computed
+	 * @return       An Array containing the holidays of one year
+	 */
 	var getHolidaysForYear = function(year) {
 		var holidays = getFixedHolidays(year);
 		var easterSunday = getEastern(year);
@@ -160,6 +194,12 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		return holidays;
 	};
 
+	/**
+	 * This function returns the dates of holidays with fixed day and month in a given year.
+	 * 
+	 * @param   year The year of which the holidays should be returned
+	 * @return       An Array containing the fixed holidays of one year
+	 */
 	var getFixedHolidays = function(year) {
 		var fixedHolidays = [];
 		var tmpDate;
@@ -207,6 +247,12 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		return fixedHolidays;
 	};
 
+	/**
+	 * This function checks if a given date is a saturday.
+	 * 
+	 * @param    date The date to check
+	 * @return        A boolean
+	 */
 	var isSaturday = function(date) {
 		if(moment(date).format("dddd") === 'Saturday') {
 			return true;
@@ -215,6 +261,12 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		}
 	};
 
+	/**
+	 * This function checks if a given date is a sunday.
+	 * 
+	 * @param    date The date to check
+	 * @return        A boolean
+	 */
 	var isSunday = function(date) {
 		if(moment(date).format("dddd") === 'Sunday') {
 			return true;
@@ -223,6 +275,12 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		}
 	};
 
+	/**
+	 * This function calculates the date of the easter sunday in a given year.
+	 * 
+	 * @param   year The year of which the easter sunday should be calculated
+	 * @return       Date of easter sunday
+	 */
 	var getEastern = function(year) {
 		var a = Math.floor(year % 19),
 	      b = Math.floor(year / 100),
@@ -241,6 +299,14 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 	  return moment({year: year, month: n - 1, day: p + 1});
 	};
 
+	/**
+	 * This function computes the amount of holidays in a given timeframe
+	 * 
+	 * @param   holidays  An object containing the dates of all holidays of a year
+	 * @param   startDate The beginning of the timeframe
+	 * @param   stopDate  The end of the timeframe
+	 * @return            The number of holidays
+	 */
 	var amountOfHolidaysBetween = function(holidays, startDate, stopDate) {
 		var result = 0;
 
@@ -253,7 +319,13 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		return result;
 	};
 
-
+	/**
+	 * This function computes the amount of holidays from a certain date until the end of the respective year
+	 * 
+	 * @param   holidays  An object containing the dates of all holidays of a year
+	 * @param   startDate The beginning of the timeframe
+	 * @return            The number of holidays
+	 */
 	var amountOfHolidaysSince = function(holidays, startDate) {
 		var result = 0;
 
@@ -266,6 +338,13 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		return result;
 	};
 
+	/**
+	 * This function computes the amount of holidays from the beginning of a year until a given date in that year
+	 * 
+	 * @param   holidays  An object containing the dates of all holidays of a year
+	 * @param   stopDate  The end of the timeframe
+	 * @return            The number of holidays
+	 */
 	var amountOfHolidaysUntil = function(holidays, stopDate) {
 		var result = 0;
 
@@ -278,6 +357,10 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		return result;
 	};
 
+	/**
+	 * This function computes the remaining vacaton days
+	 * 
+	 */
 	var getLeftVacationDays = function() {
 		var vacationSessions;
 		var vacationInSecs;
@@ -307,6 +390,10 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		});
 	};
 
+	/**
+	 * This function creates the CSV file containing the working times of one month used for reporting
+	 * 
+	 */
 	var generateCsv = function() {
 		User.all().then(function(user) {
 			var userFirstname = user[0].firstname;
@@ -344,6 +431,14 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		});
 	};
 
+	/**
+	 * This function computes the daily working time of a certain project within a given timeframe
+	 * 
+	 * @param   i         The number of the project
+	 * @param   projectId The five digit id of the project
+	 * @param   start     The start date of the timeframe
+	 * @param   stop      The end date of the timeframe
+	 */
 	var getProjectTimes = function(i, projectId, start, stop) {
 		DummyMonth.projectTimes(projectId, start, stop).then(function(result) {
 			for(var k = 0; k < result.length; k++) {
@@ -354,15 +449,4 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 		});
 	};
 
-
-/*	var sendCsvFile = function(file) {
-		var csv = Papa.unparse(file);
-		console.log("Generated CSV-file: \n" + csv);
-		window.cordova.plugins.email.open({
-			to: 'hr@department.de',
-			subject: 'MobileTimeRecording CSV Export File',
-			body: 'Please download the csv file',
-			attachments: 'base64:export.csv//' + csv
-		});
-	};*/
 });
