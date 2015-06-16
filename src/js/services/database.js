@@ -308,7 +308,7 @@ angular.module('MobileTimeRecording.services.Database', ['MobileTimeRecording.co
      * This function returns the time workon on a certain day.
      * 
      * @param  date      The date of a certain day
-     * @return            The accumulated working time on a certain day
+     * @return           The accumulated working time on a certain day
      */
     self.getAccumulatedSessionfromDay = function(date) {
         return DB.query('SELECT sum(timestamp_stop - timestamp_start) AS working_time FROM Sessions WHERE date(timestamp_start, "unixepoch", "utc") = (?)', [date])
