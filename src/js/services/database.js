@@ -336,10 +336,20 @@ angular.module('MobileTimeRecording.services.Database', ['MobileTimeRecording.co
 
     /**
      * This function deletes a certain session specified by its id from the database table Sessions.
+     * 
      * @param   id Object containing session id
      */
     self.remove = function(id) {
         return DB.query("DELETE FROM Sessions WHERE id = (?)", [id]);
+    };
+
+    /**
+     * This function checks if a given timestamp represents a time during an already existing session in the database.
+     * 
+     * @param   timestamp A unix timestamp in seconds
+     */
+    self.checkOverlapping = function(timestamp) {
+        return DB.query("SELECT count(*) AS overlappings FROM Sessions WHERE timestamp_start < ? AND timestamp_stop > ?", [timestamp, timestamp]);
     };
     
     return self;
