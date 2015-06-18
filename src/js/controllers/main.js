@@ -1,6 +1,6 @@
 angular.module('MobileTimeRecording.controllers.Main', ['MobileTimeRecording.services.Database'])
 
-.controller('MainController', function($scope, Projects, $location, ModalService){
+.controller('MainController', function($scope, Projects, $location){
   $scope.projects = [];
   $scope.project = null;
   
@@ -51,36 +51,17 @@ angular.module('MobileTimeRecording.controllers.Main', ['MobileTimeRecording.ser
   	$location.path('/addProject');
   };
 
-  /**
-   * This function is used to delete (internally archive) projects
-   * 
-   * @param   project An object containing a project
-   */
-  $scope.deleteOverlay = function(project) {
-    ModalService.showModal({
-      templateUrl: 'modal.html',
-      controller: 'ModalController'
-    }).then(function(modal) {
-      modal.element.modal();
-      modal.close.then(function(result) {
-        if(result === 'Yes') {
-          deleteProject(project.id);
-        } else {        
-          $scope.updateProjects();
-        }
-      });
-    });
-  };
 
   /**
    * THis function deletes (internally archives) a project specified by its id
-   * @param  projectId The 5 digit id of a project
+   * 
+   * @param  project An object containing a five digit id of a project
    */
-  var deleteProject = function(projectId) {
-    Projects.archive(projectId).then(function() {
-      $scope.updateProjects();
-    });
-  };
+   $scope.deleteProject = function(project) {
+     Projects.archive(project.id).then(function() {
+       $scope.updateProjects();
+     });
+   };
 })
 
 .controller('ModalController', function($scope, close) {

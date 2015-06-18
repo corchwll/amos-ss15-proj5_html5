@@ -1,6 +1,6 @@
 angular.module('MobileTimeRecording.controllers.ViewProject', ['MobileTimeRecording.services.Database'])
 
-.controller('ViewProjectController', function($scope, Projects, Sessions, $location, ngNotify, $timeout, $routeParams, ModalService){
+.controller('ViewProjectController', function($scope, Projects, Sessions, $location, ngNotify, $timeout, $routeParams){
 	
 	$scope.counter = '00:00:00';
 
@@ -34,27 +34,6 @@ angular.module('MobileTimeRecording.controllers.ViewProject', ['MobileTimeRecord
 	};
 
 	/**
-	 * This function creates an overlay which asks the user for confirmation regarding his intention to delete a session and then calls the respective functions.
-	 * 
-	 * @param   session An object containing a session
-	 */
-	$scope.deleteOverlay = function(session) {
-		ModalService.showModal({
-			templateUrl: 'modal.html',
-			controller: 'ModalController'
-		}).then(function(modal) {
-			modal.element.modal();
-			modal.close.then(function(result) {
-				if(result === 'Yes') {
-					deleteSession(session.id);
-				} else {
-					$scope.updateSessions();
-				}
-			});
-		});
-	};
-
-	/**
 	 * This function computes the duration of a session depending on its start and end.
 	 * 
 	 * @param   session An object containing a session
@@ -69,10 +48,10 @@ angular.module('MobileTimeRecording.controllers.ViewProject', ['MobileTimeRecord
 	/**
 	 * This function removes a session from the database specified by the session id.
 	 * 
-	 * @param   sessionId The id of a session
+	 * @param   session   An object containing an id of a session
 	 */
-	var deleteSession = function(sessionId) {
-		Sessions.remove(sessionId).then(function() {
+	$scope.deleteSession = function(session) {
+		Sessions.remove(session.id).then(function() {
 			$scope.updateSessions();
 		});
 	};
