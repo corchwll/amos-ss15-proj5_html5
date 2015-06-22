@@ -423,7 +423,7 @@ angular.module('MobileTimeRecording.controllers.Dashboard', ['MobileTimeRecordin
 					times[1][k] = projectArray[k];
 				}
 
-				var csv = Papa.unparse(times);
+				var csv = Papa.unparse(times, { delimiter: ";" });
 				
 				console.log(csv);
 				//sendCsvFile(csv);
