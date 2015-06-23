@@ -35,7 +35,7 @@ angular.module('MobileTimeRecording.services.Database', ['MobileTimeRecording.co
 	self.query = function(query, bindings) {
         bindings = typeof bindings !== 'undefined' ? bindings : [];
         var deferred = $q.defer();
- 
+
         self.db.transaction(function(transaction) {
             transaction.executeSql(query, bindings, function(transaction, result) {
                 deferred.resolve(result);
