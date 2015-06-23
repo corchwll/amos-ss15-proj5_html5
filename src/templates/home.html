@@ -12,15 +12,10 @@
 	    class="form-control scrollable-header"
 	    placeholder="Search.." />
   <div class="scrollabale-content">
-    <div ui-content-for="navbarAction">
-      <button class="btn" ng-click="addProject()">add Project</button>
-    </div>
-    <div ui-content-for="navbarMenu">
-    	<button class="btn" ng-model="delete" ng-click="delete = !delete">Edit</button>
-    </div>
 		<div ng-init="updateProjects()" class="list-group">
 			<a ng-click="delete || viewProject(project.id)" class="list-group-item" ng-repeat="project in projects | filter: { is_archived: '!' + 1 } | filter: searchProjects">
 				<button class="btn btn-danger" ng-disabled="project.id === '00001' || project.id === '00002' || project.id === '00003' || project.id === '00004'" ng-show="delete" confirm-click="deleteProject(project);" confirm-message="Are you sure?">DELETE</button>
+				<button class="btn btn-warning" ng-disabled="project.id === '00001' || project.id === '00002' || project.id === '00003' || project.id === '00004'" ng-show="delete" ng-click="editProject(project.id)">EDIT</button>
 				{{project.name}}
 				<i class="glyphicon glyphicon-chevron-right pull-right"></i>
 			</a>
