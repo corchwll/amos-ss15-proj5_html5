@@ -57,10 +57,8 @@ angular.module('MobileTimeRecording.controllers.AddProject', ['MobileTimeRecordi
   	console.log("push position:");
   	console.log(position.coords.longitude);
   	console.log(position.coords.latitude);
-  	for($i = 0; $i < 2; $i++) {
-	  	$scope.project.longitude = position.coords.longitude;
-	  	$scope.project.latitude = position.coords.latitude;
-	 }
+  	$scope.project.longitude = position.coords.longitude;
+  	$scope.project.latitude = position.coords.latitude;
   };
 
   /**
