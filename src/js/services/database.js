@@ -126,8 +126,8 @@ angular.module('MobileTimeRecording.services.Database', ['MobileTimeRecording.co
      * @param  project Javascript object with parameters for the new project
      */
     self.add = function(project) {
-        var parameters = [project.id, project.name, 1, 1, 0, project.date];
-        return DB.query("INSERT INTO Projects (id, name, is_displayed, is_used, is_archived, timestamp_final_date) VALUES (?, ?, ?, ?, ?, ?)", parameters);
+        var parameters = [project.id, project.name, 1, 1, 0, project.date, project.longitude, project.latitude];
+        return DB.query("INSERT INTO Projects (id, name, is_displayed, is_used, is_archived, timestamp_final_date, longitude, latitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", parameters);
     };
 
     /**
