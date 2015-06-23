@@ -3,7 +3,7 @@
 		<div ui-content-for="title">
 			<span>Add new project</span>
 		</div>
-		<form novalidate name="form" ng-submit="addProject(project)">
+		<form novalidate name="form">
 			<fieldset>
 				<div class="form-group">
 					<label>Project ID</label>
@@ -57,7 +57,7 @@
 				    </button>
 			    </div>
 				<div class="form-group">
-				    <button ng-disabled="form.$invalid" class="btn btn-primary btn-block" type="submit">
+				    <button ng-disabled="form.$invalid" class="btn btn-primary btn-block" ng-click="addProject(project)">
 				      Save
 				    </button>
 			  </div>
