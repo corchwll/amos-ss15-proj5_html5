@@ -54,11 +54,18 @@ angular.module('MobileTimeRecording.controllers.AddProject', ['MobileTimeRecordi
    * @param  position The position object created and forwarded by the getCurrentPosition function of the geolocation API
    */
   pushPosition = function(position) {
-  	console.log("push position:");
-  	console.log(position.coords.longitude);
-  	console.log(position.coords.latitude);
-  	$scope.project.longitude = position.coords.longitude;
-  	$scope.project.latitude = position.coords.latitude;
+  	ngNotify.set('Localization in progress...', {
+		type: 'warning',
+		position: 'top',
+		duration: 3000
+	});
+  	$timeout(function() {
+  		console.log("push position:");
+	  	console.log(position.coords.longitude);
+	  	console.log(position.coords.latitude);
+  		$scope.project.longitude = position.coords.longitude;
+  		$scope.project.latitude = position.coords.latitude;
+  	}, 3000);
   };
 
   /**
