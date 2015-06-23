@@ -29,6 +29,11 @@ angular.module('MobileTimeRecording', [
   		controller: 'AddProjectController',
   		reloadOnSearch: false
   	})
+    .when('/editProject', {
+      templateUrl: 'editProject.html',
+      controller: 'AddProjectController',
+      reloadOnSearch: false
+    })
     .when('/viewProject/:projectId', {
       templateUrl: 'viewProject.html',
       controller: 'ViewProjectController',
