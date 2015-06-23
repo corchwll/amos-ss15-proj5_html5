@@ -53,7 +53,7 @@ angular.module('MobileTimeRecording.controllers.Main', ['MobileTimeRecording.ser
 
 
   /**
-   * THis function deletes (internally archives) a project specified by its id
+   * This function deletes (internally archives) a project specified by its id
    * 
    * @param  project An object containing a five digit id of a project
    */
@@ -62,6 +62,32 @@ angular.module('MobileTimeRecording.controllers.Main', ['MobileTimeRecording.ser
        $scope.updateProjects();
      });
    };
+
+   /**
+    * This function calculates the distance between the two positions.
+    * The algorithm is based on: http://stackoverflow.com/questions/365826/calculate-distance-between-2-gps-coordinates?answertab=active#tab-top
+    * 
+    * @param   currentPosition An Object containing latitude and longitude
+    * @param   project         An Object containing latitude and longitude
+    * @return                  The distance between the two postitons
+    */
+   calculateDistance = function(currentPosition, project) {
+      var lat1 = currentPosition.latitude;
+      var lon1 = currentPosition.longitude;
+      var lat2 = project.latitude;
+      var lon2 = project.longitude;
+
+      var R = 6371; // km
+      var dLat = (lat2-lat1).toRad();
+      var dLon = (lon2-lon1).toRad();
+      lat1 = lat1.toRad();
+      lat2 = lat2.toRad();
+
+      var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+      return R * c;
+   }
 })
 
 .controller('ModalController', function($scope, close) {
