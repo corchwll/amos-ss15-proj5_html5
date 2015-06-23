@@ -38,14 +38,14 @@
 				</div>
 				<div class="form-group">
 					<label>Longitude</label>
-					<input class="form-control" name="longitude" type="text" placeholder="Please enter longitude or use track button" ng.model="project.longitude" required/>
+					<input class="form-control" name="longitude" type="text" placeholder="Please enter longitude or use track button" ng-model="project.longitude" required/>
 					<p class="help-block" ng-show="form.longitude.$error.required">
 						please fill out every field
 					</p>
 				</div>
 				<div class="form-group">
 					<label>Latitude</label>
-					<input class="form-control" name="latitude" type="text" placeholder="Please enter latitude or use track button" ng.model="project.latitude" required/>
+					<input class="form-control" name="latitude" type="text" placeholder="Please enter latitude or use track button" ng-model="project.latitude" required/>
 					<p class="help-block" ng-show="form.latitude.$error.required">
 						please fill out every field
 					</p>
@@ -58,14 +58,14 @@
 		    </div>
 		    <fieldset>
 			    <div class="form-group">
-			    <button ng-disabled="form.$invalid" class="btn btn-warning btn-block" ng-click="trackProject()">
-			      Track
-			    </button>
+				    <button class="btn btn-warning btn-block" ng-click="trackProject()">
+				      Track
+				    </button>
 			    </div>
 				<div class="form-group">
-			    <button ng-disabled="form.$invalid" class="btn btn-primary btn-block" type="submit">
-			      Save
-			    </button>
+				    <button ng-disabled="form.$invalid" class="btn btn-primary btn-block" type="submit">
+				      Save
+				    </button>
 			  </div>
 		  </fieldset>
 		</form>
