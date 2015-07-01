@@ -10,9 +10,11 @@ angular.module('MobileTimeAccounting.controllers.ViewProject', ['MobileTimeAccou
 	 */
 	$scope.getProject = function() {
 		Projects.getById($routeParams.projectId).then(function(project) {
+			console.log("Me was called again");
 			$scope.project = project;
 			$scope.title = project.name;
 		});
+		console.log("Me was called");
 	};
 
 	/**
