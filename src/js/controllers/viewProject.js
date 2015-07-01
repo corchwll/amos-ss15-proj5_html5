@@ -2,7 +2,7 @@ angular.module('MobileTimeAccounting.controllers.ViewProject', ['MobileTimeAccou
 
 .controller('ViewProjectController', function($scope, Projects, Sessions, $location, ngNotify, $timeout, $routeParams){
 	
-	$scope.counter = '00:00:00';
+	$scope.timerRunning = false;
 
 	/**
 	 * This function loads a project into the view
@@ -58,183 +58,154 @@ angular.module('MobileTimeAccounting.controllers.ViewProject', ['MobileTimeAccou
 		});
 	};
 
-	/* state whether timer is running or not */
-	var state = 0;
-	var currentDate;
-	var counter;
-	var refresh;
-
 	/**
 	 * This function starts the timer for a project specified by its id.
 	 * 
 	 * @param  projectId The 5 digit id of a project
 	 */
-	$scope.start = function(projectId) {
-	    var startDate = new Date();
-	    var startTime = startDate.getTime();
-	    var startDay = moment(startDate).format("YYYY-MM-DD");
+	  $scope.startTimer = function (projectId){
+	   	var startTime = moment().unix();
+	   	var startDay = moment().format("YYYY-MM-DD");
 
-	    /* Check for project end date */
-	    Projects.getById(projectId).then(function(project) {
-	    	var finalDate = project.timestamp_final_date;
+	   	/* Check for project end date */
+	   	Projects.getById(projectId).then(function(project) {
+	   		var finalDate = project.timestamp_final_date;
+	   		if(projectExpired(startTime, finalDate)) {
+	   			ngNotify.set('It is not possible to record times after the final project date', {
+	   				type: 'error',
+	   				position: 'top',
+	   				duration: 3000
+	   			});
+	   		} else {
+	   			/* Check for maximum working time per day */
+	   			Sessions.getAccumulatedSessionfromDay(startDay).then(function(workingTimeOfDay) {
+	   		    /* Check for overlapping sessions */
+	   		    Sessions.checkSimpleOverlapping(startTime).then(function(result) {
+	   		    	if(60*60*10 <= workingTimeOfDay.working_time) {
+	   		    		ngNotify.set('The total working hours can not exceed ten hours per day', {
+	   						type: 'error',
+	   						position: 'top',
+	   						duration: 3000
+	   					});
+	   		    	} else if(result.overlappings === 0) {
+	   				    /* Start timer if it is not already running */
+	   				    if($scope.timerRunning === false) {
+	 				        $scope.$broadcast('timer-start');
+	 				        $scope.timerRunning = true;
+	 				        starttimeDb(startTime, projectId);
+	   				    }
+	   					} else {
+	   						ngNotify.set('You have already recorded for this time', {
+	   							type: 'error',
+	   							position: 'top',
+	   							duration: 3000
+	   						});
+	   					}
+	   		    });
+	   	    });
+	   		}
+	   	});    
+	   };
 
-	    	if(projectExpired(startTime/1000, finalDate)) {
-	    		ngNotify.set('It is not possible to record times after the final project date', {
-					type: 'error',
-					position: 'top',
-					duration: 3000
-				});	    		
-	    	} else {
-		    	/* Check for maximum working time per day */
-	    	    Sessions.getAccumulatedSessionfromDay(startDay).then(function(workingTimeOfDay) {
 
-	    		    /* Check for overlapping sessions */
-	    		    Sessions.checkSimpleOverlapping(Math.floor(startTime/1000)).then(function(result) {
-	    		    	if(60*60*10 <= workingTimeOfDay.working_time) {
-	    		    		ngNotify.set('The total working hours can not exceed ten hours per day', {
-	    						type: 'error',
-	    						position: 'top',
-	    						duration: 3000
-	    					});
-	    		    	} else if(result.overlappings === 0) {
-	    				    /* Start counter if it is not already running */
-	    				    if(state === 0) {
-	    				        state = 1;
-	    				        timer(startTime, projectId);
-	    				        starttimeDb(startTime, projectId);
-	    				    }
-	    				} else {
-	    					ngNotify.set('You have already recorded for this time', {
-	    						type: 'error',
-	    						position: 'top',
-	    						duration: 3000
-	    					});
-	    				}
-	    		    });
-	    	    });
-    		}
-	    });
-	};
+	    /**
+	      * This function stops the timer for a project specified by its id.
+	      * 
+	      * @param  projectId The 5 digit id of a project
+	      */
+	     $scope.stopTimer = function (projectId){
+	    		var stopTime = moment().unix();
+	    		var day = moment().format("YYYY-MM-DD");
 
-	/**
-	 * This function checks if the final project data has been reached already.
-	 * 
-	 * @param   currentDate UNIX timestamp
-	 * @param   finalDate   UNIX timestamp
-	 * @return              Boolean
-	 */
-	var projectExpired = function(currentDate, finalDate) {
-		if(!finalDate) {
-			return false;
-		} else if(currentDate > finalDate) {
-			return true;
-		} else {
-			return false;
-		}
+	     	Sessions.currentSession(projectId).then(function(currentSession) {
+	     		Sessions.getById(currentSession.currentSessionId).then(function(dbSession) {
+	     			Sessions.checkFullOverlapping(dbSession.timestamp_start, stopTime).then(function(overlapResult) {
+	   					Sessions.getAccumulatedSessionfromDay(day).then(function(workingTimeOfDay) {
+	     					var sessionTime = stopTime - dbSession.timestamp_start;
 
-	}
+	     					if(sessionTime > (60*60*10 - workingTimeOfDay.working_time)) {
+	     						var session = {};
+	     						session.project_id = projectId;
+	     						session.timestamp_stop = dbSession.timestamp_start + (60*60*10 - workingTimeOfDay.working_time);
 
-	/**
-	 * This function stops the timer for a project specified by its id.
-	 * 
-	 * @param  projectId The 5 digit id of a project
-	 */
-	$scope.stop = function(projectId) {
-	    if(state === 1) {
-	    	var stopDate = new Date();
-	   		var stopTime = stopDate.getTime();
-	   		var day = moment(stopDate).format("YYYY-MM-DD");
+	     						$scope.$broadcast('timer-stop');
+	     						$scope.timerRunning = false;
+	     						Sessions.addStop(session).then(function() {
+	     							$scope.$broadcast('timer-reset');
+	     							ngNotify.set('The total working hours can not exceed ten hours per day', {
+	   									type: 'error',
+	   									position: 'top',
+	   									duration: 3000
+	   								});
+	     						});
+	     					} else if(overlapResult.overlappings === 0) {
+	       					$scope.$broadcast('timer-stop');
+	       					$scope.timerRunning = false;
+	       					stoptimeDb(stopTime, projectId);
+	       					$scope.$broadcast('timer-reset');
+	       				} else {
+	       					$scope.$broadcast('timer-stop');
+	       					$scope.timerRunning = false;
+	   		    			Sessions.remove(currentSession.currentSessionId).then(function() {
+	   		    				$scope.$broadcast('timer-reset');
+	   		    				ngNotify.set('You have already recorded for this time', {
+	   									type: 'error',
+	   									position: 'top',
+	   									duration: 3000
+	   								});
+	   		    			});
+	       				}
+	       			});
+	     			});
+	     		});
+	     	});
+	     };
 
-	    	Sessions.currentSession(projectId).then(function(result) {
-	    		Sessions.getById(result.currentSessionId).then(function(result2) {
-	    			Sessions.checkFullOverlapping(result2.timestamp_start, stopTime).then(function(result3) {
-	    				Sessions.getAccumulatedSessionfromDay(day).then(function(workingTimeOfDay) {
-	    					var sessionTime = stopTime - result2.timestamp_start;
+	     	/**
+	     	 * This function inserts the start time of a session into the database.
+	     	 * 
+	     	 * @param   startTime The time of the beginning of the current session
+	     	 * @param   projectId The 5 digit id of a project
+	     	 */
+	     	var starttimeDb = function(startTime, projectId) {
+	         var session = {};
+	         session.timestamp_start = startTime;
+	         session.project_id =  projectId;
+	         
+	         Sessions.addStart(session);
+	     	};
 
-	    					if(sessionTime > (60*60*10 - workingTimeOfDay.working_time)) {
-	    						var session = {};
-	    						session.project_id = projectId;
-	    						session.timestamp_stop = result2.timestamp_start + (60*60*10 - workingTimeOfDay.working_time);
+	     	/**
+	     	 * This function inserts the current time as stop time of the current session into the database.
+	     	 *
+	     	 * @param   stopTime The time of the end of the current session
+	     	 * @param  	projectId The 5 digit id of a project
+	     	 */
+	     	var stoptimeDb = function(stopTime, projectId) {
+	     		var session = {};
+	         session.timestamp_stop = stopTime;
+	         session.project_id =  projectId;
 
-	    						Sessions.addStop(session).then(function() {
-	    							state = 0;
-	    							$scope.counter = '00:00:00';
-	    							ngNotify.set('The total working hours can not exceed ten hours per day', {
-										type: 'error',
-										position: 'top',
-										duration: 3000
-									});
-	    						});
-	    					} else if(result3.overlappings === 0) {
-		    					state = 0;
-		       	 				stoptimeDb(projectId);
-		    				} else {
-		    					state = 0;
-				    			ngNotify.set('You have already recorded for this time', {
-									type: 'error',
-									position: 'top',
-									duration: 3000
-								});
-				    			Sessions.remove(result.currentSessionId);
-		    				}
-		    			});
-	    			});
-	    		});
-	    	});
-	    }
-	};
+	         Sessions.addStop(session).then(function() {
 
-	/**
-	 * This function refreshes the displayed timer every second and formats the timer.
-	 * 
-	 * @param   startTime The time of the beginning of the current session
-	 * @param   projectId The 5 digit id of a project
-	 */
-	var timer = function(startTime, projectId) {
-	    var timeDiff = new Date().getTime() - startTime;
+	         	$scope.updateSessions();
+	         });
+	     	};
 
-	    if(state === 1) {
-	        $scope.counter = moment.utc(timeDiff).format("HH:mm:ss");
-	        $timeout(function() {
-	        	timer(startTime, projectId);
-	        }, 10);
-	    }
-	};
-	
-	/**
-	 * This function inserts the start time of a session into the database.
-	 * 
-	 * @param   startTime The time of the beginning of the current session
-	 * @param   projectId The 5 digit id of a project
-	 */
-	var starttimeDb = function(startTime, projectId) {
-	    var session = {};
-	    session.timestamp_start = Math.floor(startTime/1000);
-	    session.project_id =  projectId;
-	    
-	    Sessions.addStart(session);
-	};
-	
-	/**
-	 * This function inserts the current time as stop time of the current session into the database.
-	 * 
-	 * @param  projectId The 5 digit id of a project
-	 */
-	var stoptimeDb = function(projectId) {
-		var session = {};
-	    var stopTime = new Date().getTime();
-	    session.timestamp_stop = Math.floor(stopTime/1000);
-	    session.project_id =  projectId;
-
-	    Sessions.addStop(session).then(function() {
-	    	$scope.counter = '00:00:00';
-	    	$scope.updateSessions();
-	    });
-	};
-})
-
-.controller('ModalController', function($scope, close) {
-  $scope.close = function(result) {
-    close(result);
-  };
-});
+	     	/**
+	     	 * This function checks if the final project date has been reached already.
+	     	 * 
+	     	 * @param  currentDate Unix timestamp
+	     	 * @param  finalDate   Unix timestamp
+	     	 * @return             Boolean
+	     	 */
+	     	var projectExpired = function(currentDate ,finalDate) {
+	     		if(!finalDate) {
+	     			return false;
+	     		} else if(currentDate > finalDate) {
+	     			return true;
+	     		} else {
+	     			return false;
+	     		}
+	     	};
+	     });
