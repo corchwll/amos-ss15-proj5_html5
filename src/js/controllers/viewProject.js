@@ -116,17 +116,25 @@ angular.module('MobileTimeAccounting.controllers.ViewProject', ['MobileTimeAccou
     		var day = moment().format("YYYY-MM-DD");
 
     		if(false == $scope.timerRunning) {
-    			//do nothing
+    			//If timer is not running, do nothing
     		} else {
-    			//stop timer
+    			//Timer is running and gets stopped now
     		
+    			//Get the current session ID in order to retreive the current session
 		     	Sessions.currentSession(projectId).then(function(currentSession) {
+
+		     		//Get the current session in order to have time available, when session was started
 		     		Sessions.getById(currentSession.currentSessionId).then(function(dbSession) {
+
+		     			//Check if now ending session overlaps with already existing sessions
 		     			Sessions.checkFullOverlapping(dbSession.timestamp_start, stopTime).then(function(overlapResult) {
+
+		     				//Check whether the 10 hours per day maximum rule gets violated if the current session is added
 		   					Sessions.getAccumulatedSessionfromDay(day).then(function(workingTimeOfDay) {
 		     					var sessionTime = stopTime - dbSession.timestamp_start;
 
 		     					if(sessionTime > (60*60*10 - workingTimeOfDay.working_time)) {
+		     						//10 hours per day maximum rule gets violated, thus cut of current session to allowed maximum and trigger notification (and stop timer and make database entry)
 		     						var session = {};
 		     						session.project_id = projectId;
 		     						session.timestamp_stop = dbSession.timestamp_start + (60*60*10 - workingTimeOfDay.working_time);
@@ -142,23 +150,25 @@ angular.module('MobileTimeAccounting.controllers.ViewProject', ['MobileTimeAccou
 		   								});
 		     						});
 		     					} else if(overlapResult.overlappings === 0) {
-		       					$scope.$broadcast('timer-stop');
-		       					$scope.timerRunning = false;
-		       					stoptimeDb(stopTime, projectId);
-		       					$scope.$broadcast('timer-reset');
-		       				} else {
-		       					$scope.$broadcast('timer-stop');
-		       					$scope.timerRunning = false;
-		   		    			Sessions.remove(currentSession.currentSessionId).then(function() {
-		   		    				$scope.$broadcast('timer-reset');
-		   		    				ngNotify.set('You have already recorded for this time', {
-		   									type: 'error',
-		   									position: 'top',
-		   									duration: 3000
-		   								});
-		   		    			});
-		       				}
-		       			});
+			     					//Session is valid, thus stop timer and add stop time to database
+			       					$scope.$broadcast('timer-stop');
+			       					$scope.timerRunning = false;
+			       					stoptimeDb(stopTime, projectId);
+			       					$scope.$broadcast('timer-reset');
+			       				} else {
+			       					//New session overlaps with existing ones. Stop timer and trigger notification.
+			       					$scope.$broadcast('timer-stop');
+			       					$scope.timerRunning = false;
+			   		    			Sessions.remove(currentSession.currentSessionId).then(function() {
+			   		    				$scope.$broadcast('timer-reset');
+			   		    				ngNotify.set('You have already recorded for this time', {
+			   									type: 'error',
+			   									position: 'top',
+			   									duration: 3000
+			   								});
+			   		    			});
+			       				}
+			       			});
 		     			});
 		     		});
 		     	});
