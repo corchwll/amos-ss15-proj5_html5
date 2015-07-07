@@ -78,4 +78,44 @@ describe('Controller: ViewProjectController', function () {
 			expect(returnValue).toBe("00:11");
 		});
 	});
+
+	describe('Function startTimer', function () {
+		it('Test if timer gets started', function (done) {
+			$routeParams =  {projectId: '00003'};
+			expect(scope.timerRunning).toBe(false);
+			inject(function() {
+				scope.startTimer('00003');
+				done();
+			});
+			expect(scope.timerRunning).toBe(true);
+		});
+	});
+	/*
+	describe('Function projectExpired', function () {
+		it('Test if not expired project gets recognized as such', function (done) {
+			var smallerTimestamp = 946706766;	//01/01/2000 @ 6:06am (UTC)
+			var biggerTimestamp = 1450981098;	//12/24/2015 @ 6:18pm (UTC)
+			var returnValue;
+			inject(function() {
+				returnValue = projectExpired(biggerTimestamp, smallerTimestamp);
+				done();
+			});
+			expect(returnValue).not.toBeNull();
+			expect(returnValue).toBe(false);
+		});
+
+		it('Test if expired project gets recognized as such', function (done) {
+			var smallerTimestamp = 946706766;	//01/01/2000 @ 6:06am (UTC)
+			var biggerTimestamp = 1450981098;	//12/24/2015 @ 6:18pm (UTC)
+			var returnValue;
+			//returnValue = projectExpired(biggerTimestamp, smallerTimestamp);
+			inject(function() {
+				returnValue = projectExpired(biggerTimestamp, smallerTimestamp);
+				done();
+			});
+			expect(returnValue).not.toBeNull();
+			expect(returnValue).toBe(true);
+		});
+	});
+	*/
 });

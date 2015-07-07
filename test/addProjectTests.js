@@ -1,20 +1,20 @@
-describe('Controller: DashboardController', function() {
+describe('Controller: AddProjectController', function () {
 
 	beforeEach(module('ngNotify'));
 
-	// load the dashboard's module
-	beforeEach(module('MobileTimeAccounting.controllers.Dashboard'));
+	// load the addProjects's module
+	beforeEach(module('MobileTimeAccounting.controllers.AddProject'));
 
 	// load the database module
 	beforeEach(module('MobileTimeAccounting.services.Database'));
 
-	var DashboardController,
+	var AddProjectController,
 	scope;
 
 	// Initialize the controller and a mock scope
 	beforeEach(inject(function ($controller, $rootScope, DB, Projects) {
 		scope = $rootScope.$new();
-		DashboardController = $controller('DashboardController', {
+		AddProjectController = $controller('AddProjectController', {
 			$scope: scope,
 			$routeParams: {projectId: '02976'}
 		});
