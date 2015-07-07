@@ -8,6 +8,9 @@ describe('Controller: CreateSessionController', function () {
 	// load the database module
 	beforeEach(module('MobileTimeAccounting.services.Database'));
 
+	// load the holidays module
+	beforeEach(module('MobileTimeAccounting.services.Holidays'));
+
 	var CreateSessionController,
 	scope;
 
