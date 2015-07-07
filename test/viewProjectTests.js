@@ -23,31 +23,59 @@ describe('Controller: ViewProjectController', function () {
 	}));
 
 	describe('Function getProject', function () {
-		/*
-		it('PRETEST', function () {
-			$routeParams =  {projectId: '00001'};
-			expect($routeParams.projectId).toBe('00001');
-		});
-		*/
-		/*beforeEach(function(done) {
-			scope.getProject().then(function() {
-				done();
-			});
-		});*/
-	
 		it('Get correct predefined poject Vacation', function (done) {
 			$routeParams =  {projectId: '00001'};
-			console.log("BEGIN");
 			inject(function() {
-				console.log("Call me Injector");
 				scope.getProject()
 				done();
 			});
 			expect(scope.title).not.toBeNull();
-			console.log(scope.title);
-			console.log("Finite");
 			expect(scope.title).toBe("Vacation");
 		});
+
+		it('Get correct predefined poject Illness', function (done) {
+			$routeParams =  {projectId: '00002'};
+			inject(function() {
+				scope.getProject()
+				done();
+			});
+			expect(scope.title).not.toBeNull();
+			expect(scope.title).toBe("Illness");
+		});
+
+		it('Get correct predefined poject Office', function (done) {
+			$routeParams =  {projectId: '00003'};
+			inject(function() {
+				scope.getProject()
+				done();
+			});
+			expect(scope.title).not.toBeNull();
+			expect(scope.title).toBe("Office");
+		});
+
+		it('Get correct predefined poject Training', function (done) {
+			$routeParams =  {projectId: '00004'};
+			inject(function() {
+				scope.getProject()
+				done();
+			});
+			expect(scope.title).not.toBeNull();
+			expect(scope.title).toBe("Training");
+		});
 	});
-	
+
+	describe('Function calculateSessionDuration', function () {
+		it('Test if calculation returns correct values', function (done) {
+			var session = [];
+			var returnValue;
+			session.timestamp_start = 0;
+			session.timestamp_stop = 660;
+			inject(function() {
+				returnValue = scope.calculateSessionDuration(session)
+				done();
+			});
+			expect(returnValue).not.toBeNull();
+			expect(returnValue).toBe("00:11");
+		});
+	});
 });
