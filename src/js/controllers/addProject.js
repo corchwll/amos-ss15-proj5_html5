@@ -1,6 +1,6 @@
 angular.module('MobileTimeAccounting.controllers.AddProject', [])
 
-.controller('AddProjectController', function($scope, Projects, $location, ngNotify, $timeout, $routeParams){
+.controller('AddProjectController', function($scope, Projects, $location, Notify, $timeout, $routeParams){
 	
 	/**
 	 * This variable is used to restrict the navigator.geolocation localization to using GPS only
@@ -31,11 +31,7 @@ angular.module('MobileTimeAccounting.controllers.AddProject', [])
 		project.date = moment(project.date).add(23, 'hours').add(59, 'minutes').unix();
 		
 	  Projects.add(project).then(function() {
-	  	ngNotify.set(project.name + ' successfully added', {
-	  			type: 'success',
-	  			position: 'top',
-	  			duration: 3000
-	  		});
+	  	Notify.success(project.name + ' successfully added');
 	  	$timeout(function() {
 	  		$location.path('#/');
 	  	}, 4000);
@@ -52,11 +48,7 @@ angular.module('MobileTimeAccounting.controllers.AddProject', [])
   		project.date = moment(project.date).add(23, 'hours').add(59, 'minutes').unix();
 
   		Projects.update(project, project).then(function() {
-  			ngNotify.set(project.name + ' successfully edited', {
-  					type: 'success',
-  					position: 'top',
-  					duration: 3000
-  				});
+  			Notify.success(project.name + ' successfully edited');
   			$timeout(function() {
   				$(location).attr('href', '#/');
   			}, 3500);
@@ -73,11 +65,7 @@ angular.module('MobileTimeAccounting.controllers.AddProject', [])
 	if (navigator.geolocation) {
     	navigator.geolocation.getCurrentPosition(pushPosition, trackError, trackOptions);
     } else { 
-        ngNotify.set('Geolocation is not supported by this browser', {
-			type: 'error',
-			position: 'top',
-			duration: 3000
-		});
+		Notify.error('Geolocation is not supported by this browser');
     }
   };
 
@@ -87,11 +75,7 @@ angular.module('MobileTimeAccounting.controllers.AddProject', [])
    * @param  position The position object created and forwarded by the getCurrentPosition function of the geolocation API
    */
   pushPosition = function(position) {
-  	ngNotify.set('Localization in progress...', {
-		type: 'warning',
-		position: 'top',
-		duration: 3000
-	});
+	Notify.success('Localization in progress...');
   	$timeout(function() {
   		console.log("push position:");
 	  	console.log(position.coords.longitude);
@@ -106,10 +90,6 @@ angular.module('MobileTimeAccounting.controllers.AddProject', [])
    * 
    */
   trackError = function() {
-	ngNotify.set('GPS localization unsuccessful', {
-		type: 'error',
-		position: 'top',
-		duration: 3000
-	});
+	Notify.error('GPS localization unsuccessful');
   };
 });
