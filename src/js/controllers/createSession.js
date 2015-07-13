@@ -46,20 +46,15 @@ angular.module('MobileTimeAccounting.controllers.CreateSession', ['MobileTimeAcc
 							Sessions.checkFullOverlapping(session.timestamp_start, session.timestamp_stop).then(function(result) {
 								if(result.overlappings === 0) {
 									Sessions.add(session).then(function() {
-										if(day === moment().format("YYYY-MM-DD")) {
-											cordova.plugins.notification.local.cancel(1, function() {
-											  console.log("Daily notification canceled for today");
-											});
-										}
-								  	ngNotify.set('Session successfully added', {
-							  			type: 'success',
-							  			position: 'top',
-							  			duration: 3000
-							  		});
-								  	$timeout(function() {
-								  		$(location).attr('href', '#/viewProject/' + session.project_id);
-								  	}, 4000);
-							  	});
+									  	ngNotify.set('Session successfully added', {
+								  			type: 'success',
+								  			position: 'top',
+								  			duration: 3000
+								  		});
+									  	$timeout(function() {
+									  		$(location).attr('href', '#/viewProject/' + session.project_id);
+									  	}, 4000);
+								  	});
 								} else {
 									ngNotify.set('You have already recorded for this time', {
 										type: 'error',
