@@ -61,11 +61,11 @@ angular.module('MobileTimeAccounting.controllers.AddProject', [])
    * 
    */
   $scope.trackProject = function() {
-  	console.log("track button pressed");
-	if (navigator.geolocation) {
-    	navigator.geolocation.getCurrentPosition(pushPosition, trackError, trackOptions);
+      console.log("track button pressed");
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pushPosition, trackError, trackOptions);
     } else { 
-		Notify.error('Geolocation is not supported by this browser');
+      Notify.error('Geolocation is not supported by this browser');
     }
   };
 
@@ -86,10 +86,24 @@ angular.module('MobileTimeAccounting.controllers.AddProject', [])
   };
 
   /**
-   * This function is the error function of function trackProject. It shows a notification that the localization via GPS was unsuccessful.
+   * This function is the error function of function trackProject. It shows a notification why the localization was unsuccessful.
    * 
    */
-  trackError = function() {
-	Notify.error('GPS localization unsuccessful');
+  trackError = function(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+          Notify.error('GPS usage denied');
+          break;
+        case error.TIMEOUT:
+          Notify.error('GPS timed out');
+          break;
+        case error.POSITION_UNAVAILABLE:
+          Notify.error('GPS data is unavailable');
+          break;
+        case error.UNKNOWN_ERROR:
+          Notify.error('GPS localization unsuccessful due to unknown error');
+          break;
+    }
   };
+
 });
